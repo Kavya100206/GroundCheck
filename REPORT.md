@@ -112,7 +112,20 @@ Auditing the 58 handleable queries falsely routed to escalation at $\tau = 0.73$
 2. **Upstream Classification Bleed:** 17 of 58 FEs (29.3%) were misclassified by intent (e.g. 5 `playback_issue` cases classified as `app_technical`). Because retrieval is intent-scoped, this routed search to the wrong corpus, guaranteeing an artificially depressed similarity score.
 3. **Layer 2 Dominance:** 57 of the 58 FEs were triggered by Layer 2 similarity falling below 0.73; only 1 was triggered by a Layer 1 hard gate (`billing_dispute` on an informational receipt check).
 
-*(Placeholder: Phase 6 will expand this section with qualitative LLM-judge disagreement patterns and failure taxonomy).*
+### 7.2 Phase 5: LLM-as-a-Judge Validation & Human Disagreement Analysis ($N=50$)
+
+An independent, cross-architecture judge (`openai/gpt-oss-120b`, 120B reasoning model) was deployed over 50 stratified golden rows (all 35 auto-handled drafts + 15 representative escalations; 20 easy, 30 hard) to audit groundedness and tone without same-model bias:
+
+| Difficulty Tier | Sample Size ($N$) | Raw Agreement | Cohen's Kappa ($\kappa$) | Asymptotic Std Error ($SE$) | 95% Confidence Interval |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Easy Tier** | 20 | 80.00% (16/20) | **0.375** | 0.280 | `[-0.173, 0.923]` |
+| **Hard Tier** | 30 | 80.00% (24/30) | **0.392** | 0.222 | `[-0.043, 0.827]` |
+| **Overall Dataset** | **50** | **80.00% (40/50)** | **0.381** | **0.175** | **`[0.038, 0.724]`** |
+
+- **Continuous Metrics:** Groundedness MAE = **0.760** (Spearman $\rho = 0.313$), Tone MAE = **0.280** (Spearman $\rho = 0.076$).
+- **Core Judge Failure Patterns:**
+  1. *Procedure Sycophancy / Context Mismatch (Judge Passes, Human Fails — 3 cases):* The judge verifies that drafted advice literally matches SOP text, but ignores whether that SOP solves the customer's symptom. For example, in `gs_0004` and `gs_0116`, the customer complained about the shuffle algorithm's repetition; the agent drafted standard device restart steps (SOP PB_01). The human failed this as an unhelpful brush-off (G=2), while the judge passed it (G=5) because the steps strictly matched the SOP.
+  2. *Hyper-Pedantic Narrowness (Judge Fails, Human Passes — 7 cases):* In cases like `gs_0007` (*Settings > Playback > Show unplayable songs*) and `gs_0085` (*Web account overview country edit*), the agent provided accurate Spotify menu paths that were omitted from the condensed SOP prompt. The human passed these as accurate troubleshooting (G=5), while the judge failed them (G=3) for citing setting names absent from the prompt snippet.
 
 ---
 
@@ -128,14 +141,15 @@ A core requirement of this project is explicitly confronting the ways headline m
    Heuristic sampling suggested 72% visible resolution. Rigorous hand-auditing proved that only **22.0%** of historical threads contained standalone public resolutions. Presenting drafted replies as "grounded in historical support cases" is misleading for 78% of the traffic, which actually relies on synthesized policy fallbacks.
 4. **Retrieval Spot-Check Metric Inflation (30% vs. 90%):**
    An initial spot-check categorized 18/20 (90%) of retrieval hits as "relevant." Closer inspection revealed that 12 of those 18 were merely topically adjacent inquiries ending in DM redirects or diagnostic questions. Only **30% (6/20)** provided a concrete actionable resolution. Conflating topical relevance with operational resolution is a classic evaluation trap.
+5. **Validation-Set Reuse & Small-N Asymptotic Variance:**
+   All 50 human-judge validation rows were drawn from the same 151-row golden set already used to curate labels, calibrate $\tau=0.73$, and report headline agent metrics. Consequently, the 80.00% agreement ($\kappa = 0.381$) measures fit to an already-exposed label distribution, not generalization to unseen production queries. Furthermore, with $N_{easy}=20$ and $N_{hard}=30$, asymptotic standard errors are large ($SE \approx 0.22–0.28$), meaning the true agreement bounds span a wide range ($95\% \text{ CI}: [-0.04, 0.83]$). Point estimates alone significantly overstate statistical precision.
 
 ---
 
-## 9. Next Steps (Phases 5 & 6)
+## 9. Next Steps (Phase 6 Finalization)
 
-- **Phase 5 (Evaluation Harness & LLM Judge Validation):**
-  - Implement automated evaluation metrics script.
-  - Build the LLM-judge rubric evaluating groundedness and tone.
-  - Run the judge against human golden set annotations, measuring agreement broken down across easy vs hard tiers.
+- **Phase 5 (Completed):** Automated evaluation harness (`eval/metrics.py`), independent cross-architecture LLM judge (`eval/judge.py`), and disaggregated human validation with failure pattern discovery (`eval/validate_judge.py`) are fully implemented and verified.
 - **Phase 6 (Final Comprehensive Report & Failure Analysis):**
-  - Synthesize end-to-end findings across all 6 phases into final submission deliverables.
+  - Synthesize end-to-end findings across all phases into final submission deliverables.
+  - Finalize the top-5 concrete failure mode taxonomy with real tweet pairs.
+  - Compile final decision log entries into submission format.

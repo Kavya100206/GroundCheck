@@ -126,6 +126,7 @@ An independent, cross-architecture judge (`openai/gpt-oss-120b`, 120B reasoning 
 - **Core Judge Failure Patterns:**
   1. *Procedure Sycophancy / Context Mismatch (Judge Passes, Human Fails — 3 cases):* The judge verifies that drafted advice literally matches SOP text, but ignores whether that SOP solves the customer's symptom. For example, in `gs_0004` and `gs_0116`, the customer complained about the shuffle algorithm's repetition; the agent drafted standard device restart steps (SOP PB_01). The human failed this as an unhelpful brush-off (G=2), while the judge passed it (G=5) because the steps strictly matched the SOP.
   2. *Hyper-Pedantic Narrowness (Judge Fails, Human Passes — 7 cases):* In cases like `gs_0007` (*Settings > Playback > Show unplayable songs*) and `gs_0085` (*Web account overview country edit*), the agent provided accurate Spotify menu paths that were omitted from the condensed SOP prompt. The human passed these as accurate troubleshooting (G=5), while the judge failed them (G=3) for citing setting names absent from the prompt snippet.
+- **Synthesized Shared Mechanism:** Both *procedure sycophancy* and *evidence-narrowness* share the exact same root cause: the judge anchors on literal textual matching between the drafted reply and the SOP snippet, rather than reasoning about whether the underlying advice actually resolves the customer's stated problem. That literal anchoring produces leniency when the SOP is wrong-but-matched (passing unhelpful advice for shuffle algorithm or OS bugs), and hyper-strictness when the reply is right-but-unmatched (failing accurate settings paths omitted from the condensed SOP prompt).
 
 ---
 
@@ -146,10 +147,13 @@ A core requirement of this project is explicitly confronting the ways headline m
 
 ---
 
-## 9. Next Steps (Phase 6 Finalization)
+## 9. Next Steps (Phase 6 Finalization & Future Enhancements)
 
 - **Phase 5 (Completed):** Automated evaluation harness (`eval/metrics.py`), independent cross-architecture LLM judge (`eval/judge.py`), and disaggregated human validation with failure pattern discovery (`eval/validate_judge.py`) are fully implemented and verified.
-- **Phase 6 (Final Comprehensive Report & Failure Analysis):**
+- **Phase 6 (Immediate Deliverable):**
   - Synthesize end-to-end findings across all phases into final submission deliverables.
   - Finalize the top-5 concrete failure mode taxonomy with real tweet pairs.
   - Compile final decision log entries into submission format.
+- **Future Architectural Next Steps (Post-Evaluation Cycle):**
+  - **Judge Rubric Redesign (Two-Stage Decoupling):** Redesign the judge rubric into a two-stage evaluation: first assess whether the customer's stated problem is meaningfully addressed, independent of SOP-text match, before scoring evidence groundedness. This directly resolves the literal textual match failure modes discovered in Phase 5, and was deliberately deferred to maintain the frozen-prompt anti-tuning commitment for the current evaluation cycle.
+

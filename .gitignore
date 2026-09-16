@@ -1,0 +1,47 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Raw large dataset (~500MB)
+archive/
+
+# Python caches, virtual environments, and OS artifacts
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+.DS_Store
+
+# Intermediate numpy embeddings cache (12MB binary, regenerable locally)
+*.npy
+
+# Scratch directories
+scratch/
+
+# Source planning documents migrated to root REPORT.md, DECISION_LOG.md, ARCHITECTURE.md
+context.md
+build.md
+system.md
+
+# test/scratch files ignored by default — deliverable docs below are exceptions
+test_*.py
+*_test.py
+test/
+tests/
+scratch_*.py
+tmp_*.py
+*_notes.md
+scratch_*.md
+
+# Permanent required deliverables (must always stay tracked)
+!README.md
+!REPORT.md
+!DECISION_LOG.md
+!ARCHITECTURE.md
+!phase1b_methodology.md
+!phase2_baselines_report.md
+!phase3_evaluation_report.md
+!phase4_agent_report.md
+!golden_set_to_label.csv

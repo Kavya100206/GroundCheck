@@ -1,0 +1,133 @@
+id,gold_intent,difficulty_tier,predicted_intent,confidence,reason
+gs_0000,playback_issue,easy,app_technical,0.65,User is requesting a missing feature (blocking songs/artists) to manage content within the application.
+gs_0001,playback_issue,easy,playback_issue,0.65,"The user is complaining about the playback behavior of the player automatically inserting suggested songs, which is a functional playback issue rather than a technical crash or billing problem."
+gs_0002,playback_issue,easy,app_technical,0.45,"Request for content availability or catalog restoration, which does not fit specific technical, billing, or login categories, so it is routed to the general technical support bucket as the closest fit for non-playback app issues."
+gs_0003,playback_issue,easy,app_technical,0.3,"The query concerns content availability rather than a technical fault, but it is forced into the closest non-billing/non-login category as it does not fit the other specific intents."
+gs_0004,playback_issue,easy,playback_issue,0.85,Complaint regarding unexpected and repetitive track selection during shuffle playback.
+gs_0005,playback_issue,hard,playback_issue,0.85,Specific playback feature (radio mode) fails to execute or play audio.
+gs_0006,playback_issue,hard,playback_issue,0.95,Audio playback is skipping repeatedly across all tracks.
+gs_0007,playback_issue,hard,playback_issue,0.9,"Audio playback fails on a specific device with an availability error, despite the content being downloaded and working on other devices."
+gs_0008,playback_issue,hard,playback_issue,0.95,Audio playback fails to start or continues after skipping tracks.
+gs_0009,playback_issue,hard,playback_issue,0.85,"Specific track fails to play from playlists due to availability restrictions, preventing audio playback in that context."
+gs_0010,playback_issue,hard,playback_issue,0.95,Audio playback fails to produce sound and stops after a few seconds.
+gs_0011,playback_issue,hard,app_technical,0.9,"The Spotify application freezes during use, indicating a stability issue rather than a playback or device integration problem."
+gs_0012,playback_issue,hard,app_technical,0.85,The application freezes during use on the computer platform.
+gs_0013,playback_issue,hard,premium_billing,0.85,"The issue stems from the termination of the subscription, requiring account status or billing verification to restore access."
+gs_0014,playback_issue,hard,playback_issue,0.95,Audio playback freezes and controls are unresponsive during music playback.
+gs_0015,playback_issue,hard,playback_issue,0.9,"The core unresolved issue is that songs are not playing, despite technical troubleshooting steps already being taken."
+gs_0016,playback_issue,hard,playback_issue,0.85,"The user reports that specific tracks are failing to play, which falls under audio playback failures."
+gs_0017,playback_issue,hard,device_platform,0.9,Specific UI rendering and playback failures occurring on the Xbox One platform.
+gs_0018,playback_issue,hard,device_platform,0.9,Media control button functionality failure on a specific operating system (macOS High Sierra).
+gs_0019,playback_issue,hard,playback_issue,0.95,Audio playback is skipping and interrupting unexpectedly during song playback.
+gs_0020,playback_issue,hard,playback_issue,0.95,"Audio playback is skipping unexpectedly, described as sounding like a scratched CD."
+gs_0021,playback_issue,hard,playback_issue,0.9,Audio playback fails to start or stops unexpectedly in the web player.
+gs_0022,playback_issue,hard,playback_issue,0.85,Audio playback is interrupting and restarting unexpectedly.
+gs_0023,playback_issue,hard,playback_issue,0.95,Audio playback randomly skips tracks without a consistent pattern.
+gs_0024,playback_issue,hard,playback_issue,0.95,Audio output is distorted with crackling and popping sounds during playback.
+gs_0025,playback_issue,hard,playback_issue,0.9,Audio playback stops unexpectedly when interacting with other applications.
+gs_0026,playback_issue,hard,app_technical,0.85,"The primary complaint is that the application is crashing, which is a stability issue distinct from audio playback errors."
+gs_0027,premium_billing,hard,account_login,0.85,"The app is incorrectly identifying the user's account status as free, indicating an authentication or profile sync issue."
+gs_0028,app_technical,hard,app_technical,0.95,"Application crashes during usage, indicating a stability or compatibility bug."
+gs_0029,app_technical,hard,app_technical,0.9,Application crashes when attempting to share content.
+gs_0030,playback_issue,hard,playback_issue,0.95,Audio playback skips unexpectedly at the end of a specific track.
+gs_0031,playback_issue,hard,playback_issue,0.9,"Reports of audio skipping, repetitive shuffle, and playback glitches."
+gs_0032,device_platform,hard,device_platform,0.95,Issue involves iOS-specific Bluetooth controls and home screen widget integration.
+gs_0033,playback_issue,hard,playback_issue,0.85,User reports inability to play specific content (playlist folder) within the app.
+gs_0034,account_login,hard,account_login,0.85,Failure to create or access an account due to an authentication error.
+gs_0037,app_technical,hard,app_technical,0.85,"The user is reporting a specific error code (404) indicating a technical failure in the application or service, distinct from audio playback or billing issues."
+gs_0039,account_login,hard,account_login,0.9,The issue describes a failure to authenticate and regain access to the account due to a state conflict.
+gs_0040,playback_issue,easy,app_technical,0.65,The resolution via device restart implies the previous issue was a temporary app freeze or crash.
+gs_0042,playback_issue,hard,playback_issue,0.65,The mention of restarting the router to resolve connectivity issues typically addresses buffering or playback interruptions.
+gs_0044,app_technical,hard,app_technical,0.95,Application installation and reinstallation process is failing.
+gs_0045,app_technical,hard,app_technical,0.95,Application fails to launch due to missing system dependency and persists after reinstallation.
+gs_0046,device_platform,easy,device_platform,0.85,Customer is inquiring about app compatibility or feature availability for a specific device model.
+gs_0047,playback_issue,hard,playback_issue,0.85,The 20-minute wait time indicates significant buffering or connection instability affecting audio playback.
+gs_0048,playback_issue,hard,app_technical,0.3,"The tweet is vague and lacks specific technical details, but the context of 'fixing' a broken state implies a general technical malfunction rather than a specific billing or login issue."
+gs_0051,app_technical,hard,app_technical,0.9,Complaint regarding app update process requiring deletion of offline data.
+gs_0053,app_technical,hard,app_technical,0.95,Application force closes during specific interaction despite reinstallation.
+gs_0054,app_technical,hard,app_technical,0.95,Application performance issues causing freezing or unresponsiveness requiring restarts.
+gs_0055,app_technical,hard,app_technical,0.85,Visual rendering failure (missing album art) following an app update indicates a technical bug.
+gs_0056,playback_issue,hard,app_technical,0.85,Unexpected deletion of cached content indicates a software stability or data management bug within the application.
+gs_0057,device_platform,hard,device_platform,0.95,Bluetooth connectivity and integration issue with in-car audio system.
+gs_0058,playback_issue,hard,playback_issue,0.85,"User is unable to play specific tracks due to availability errors, preventing audio playback."
+gs_0059,playback_issue,hard,playback_issue,0.9,Audio playback is stuck on a single track and failing to progress to the next song.
+gs_0060,playback_issue,hard,device_platform,0.9,Audio playback is interrupted by specific OS-level app switching behavior on iOS.
+gs_0061,device_platform,hard,device_platform,0.9,Issue relates to browser-specific compatibility and web player functionality on Firefox.
+gs_0062,playback_issue,hard,playback_issue,0.85,"The shuffle algorithm is failing to provide variety, resulting in repetitive track selection during playback."
+gs_0063,playback_issue,hard,playback_issue,0.85,"The user reports that a specific album is 'broken,' implying audio playback failures or missing tracks within that content."
+gs_0064,account_login,easy,account_login,0.9,Report of unauthorized account access requires security review and credential recovery.
+gs_0065,account_login,hard,account_login,0.85,Issue involves account verification and access management for an artist profile.
+gs_0066,account_login,hard,app_technical,0.65,"Unexpected content in the feed suggests a software glitch or data synchronization error within the application, which does not fit the specific definitions for playback, login, device, or billing issues."
+gs_0067,account_login,easy,account_login,0.9,"Issue involves linking social media credentials to an account, which falls under account access and authentication management."
+gs_0068,account_login,hard,account_login,0.98,Customer is unable to authenticate and requires assistance recovering access to an inactive email address.
+gs_0069,premium_billing,hard,account_login,0.65,"The user is unable to access account data or renew their card due to broken links, indicating an access or authentication barrier."
+gs_0070,premium_billing,hard,premium_billing,0.9,Request involves managing Family plan membership and account association.
+gs_0071,account_login,hard,account_login,0.85,"Customer reports paying for the service but having no access to the account, indicating an access or authentication issue."
+gs_0072,app_technical,hard,app_technical,0.85,The system locking up after a previous fix attempt indicates a persistent stability or crash issue.
+gs_0073,account_login,hard,account_login,0.95,Request for assistance recovering access to an account with unknown email credentials.
+gs_0074,account_login,hard,account_login,0.85,Issue concerns account creation eligibility and unauthorized account access for a minor.
+gs_0075,account_login,easy,account_login,0.85,Request for account metadata (creation date) falls under account management and access.
+gs_0076,account_login,hard,account_login,0.85,"The user is experiencing authentication failures that are dependent on network connectivity, preventing successful login."
+gs_0077,account_login,hard,account_login,0.9,Issue involves account ownership and email access recovery.
+gs_0078,account_login,easy,account_login,0.95,Customer explicitly requests assistance with a login issue.
+gs_0079,account_login,easy,account_login,0.85,Inability to create or access a new account falls under account management and authentication issues.
+gs_0081,account_login,easy,account_login,0.95,Login authentication failure due to disconnected social media account link.
+gs_0082,account_login,hard,account_login,0.95,Request to recover access by reverting an unauthorized email address change on the account.
+gs_0083,account_login,easy,account_login,0.9,"Issue concerns account identity, username assignment, and social login history."
+gs_0084,account_login,hard,account_login,0.95,Request to unlink a legacy social login provider to regain access and register a new account.
+gs_0085,account_login,hard,account_login,0.95,"Account access is blocked due to regional restrictions, preventing login."
+gs_0086,device_platform,hard,account_login,0.85,Customer explicitly suggests an account issue and offers login credentials for verification.
+gs_0087,account_login,hard,account_login,0.9,User is unable to complete the login process and is stuck at the online connection stage.
+gs_0089,app_technical,hard,app_technical,0.85,Persistent authorization failure and intrusive error notifications indicate a software integration bug within the app.
+gs_0090,account_login,easy,account_login,0.95,Customer is reporting an unresolved account security and access issue.
+gs_0091,account_login,hard,account_login,0.85,"The user is reporting a failure to access the login page, which is a primary authentication entry point."
+gs_0092,premium_billing,hard,premium_billing,0.85,Inquiry regarding Family plan management and account sharing restrictions.
+gs_0093,account_login,easy,account_login,0.95,Account security breach requiring access recovery and authentication support.
+gs_0095,account_login,hard,account_login,0.95,Login authentication failure with specific token error preventing access.
+gs_0096,playback_issue,hard,app_technical,0.65,"The user describes a persistent, cross-platform application defect rather than a specific device integration or billing issue."
+gs_0098,device_platform,hard,device_platform,0.9,Inquiry regarding specific vehicle integration (BMW ConnectedDrive) settings and connectivity.
+gs_0099,app_technical,hard,app_technical,0.95,Application crashes when attempting to share content on Android.
+gs_0100,device_platform,easy,device_platform,0.85,"Customer provides specific vehicle model and app version details, indicating a context of in-car integration or compatibility support."
+gs_0101,device_platform,hard,device_platform,0.85,Complaint regarding lack of browser compatibility for Safari on macOS High Sierra.
+gs_0102,device_platform,easy,device_platform,0.85,"Customer is providing specific device model and OS version details, indicating a device-specific compatibility issue."
+gs_0103,playback_issue,easy,premium_billing,0.85,Customer is disputing the value of their paid subscription and implying a desire to downgrade or cancel.
+gs_0104,playback_issue,hard,playback_issue,0.85,"The resolution involved stopping a conflicting instance of the app, which typically causes audio playback interruptions or connection drops."
+gs_0106,playback_issue,hard,playback_issue,0.85,Specific content failing to play across multiple devices indicates a playback or catalog availability issue rather than a device-specific bug.
+gs_0107,device_platform,hard,device_platform,0.95,Missing OS lock screen media controls on iOS indicate a platform-specific integration issue.
+gs_0109,device_platform,easy,device_platform,0.85,Inquiry regarding compatibility and feature support for a specific wearable device platform.
+gs_0110,device_platform,hard,device_platform,0.85,"The customer explicitly mentions the issue is related to their car, indicating a vehicle integration or compatibility problem."
+gs_0111,device_platform,hard,device_platform,0.9,Hardware-specific control integration failure on iOS platform.
+gs_0112,app_technical,hard,app_technical,0.9,The web player application is crashing repeatedly during use.
+gs_0114,app_technical,easy,device_platform,0.85,Complaint regarding a specific feature limitation or bug on the Android platform.
+gs_0115,app_technical,easy,app_technical,0.85,Complaint regarding application background behavior and startup configuration settings.
+gs_0116,playback_issue,easy,playback_issue,0.85,The user describes unexpected and incorrect track sequencing behavior during shuffle playback.
+gs_0118,device_platform,easy,app_technical,0.65,"Provisional technical support inquiry providing device and app version details, typically preceding a report of app instability or compatibility issues."
+gs_0119,playback_issue,hard,device_platform,0.85,Explicit mention of the browser web player indicates a platform-specific integration issue.
+gs_0120,playback_issue,hard,device_platform,0.85,Discrepancy in content availability and functionality between mobile and desktop platforms.
+gs_0121,playback_issue,hard,playback_issue,0.9,"User reports inability to play music across multiple platforms, indicating a core audio playback failure."
+gs_0122,playback_issue,hard,playback_issue,0.9,Audio playback initiates unexpectedly and automatically without user interaction.
+gs_0123,playback_issue,hard,playback_issue,0.9,"Audio playback is skipping, pausing, and fast-forwarding unexpectedly."
+gs_0125,premium_billing,easy,premium_billing,0.85,Customer is expressing dissatisfaction with a specific subscription plan upgrade and management.
+gs_0126,premium_billing,hard,premium_billing,0.9,Customer is requesting assistance with subscription cancellation after failing to follow online instructions.
+gs_0127,premium_billing,hard,premium_billing,0.85,Customer explicitly requests cancellation of their subscription.
+gs_0128,premium_billing,easy,premium_billing,0.85,"Customer is inquiring about subscription cancellation, which falls under plan management."
+gs_0129,premium_billing,easy,premium_billing,0.85,"Customer is requesting assistance with a third-party subscription service (Hulu) linked to their account, which falls under account and billing management."
+gs_0131,premium_billing,hard,premium_billing,0.95,Customer is requesting subscription cancellation and encountering issues with the billing management process.
+gs_0132,premium_billing,easy,premium_billing,0.9,Customer is discussing subscription pricing and payment method restrictions.
+gs_0133,premium_billing,hard,premium_billing,0.9,Issue involves updating payment method and billing account management.
+gs_0134,premium_billing,easy,premium_billing,0.85,Inquiry regarding the status or benefits of an existing paid premium subscription.
+gs_0135,premium_billing,hard,premium_billing,0.9,"Inquiry regarding subscription plan management, cancellation, and promotional offers."
+gs_0136,premium_billing,hard,premium_billing,0.9,Issue involves managing a Family plan subscription and inviting members.
+gs_0137,playback_issue,hard,playback_issue,0.85,Inability to play specific artist content despite having a valid subscription indicates a playback restriction or error.
+gs_0138,premium_billing,easy,premium_billing,0.85,Inquiry regarding payment method availability for purchasing a premium subscription.
+gs_0139,premium_billing,easy,premium_billing,0.85,Inquiry regarding subscription benefits and promotional eligibility for existing premium members.
+gs_0141,premium_billing,easy,premium_billing,0.85,Explicit mention of premium subscription issues typically relates to billing or plan management.
+gs_0142,premium_billing,hard,premium_billing,0.95,Customer is inquiring about potential duplicate charges based on multiple receipts.
+gs_0143,premium_billing,hard,premium_billing,0.95,Customer is disputing unauthorized or unexpected subscription charges.
+gs_0144,premium_billing,hard,premium_billing,0.98,Customer is disputing unexpected price increases and charges on their subscription.
+gs_0145,account_login,hard,account_login,0.95,Customer is unable to access their account and is providing credentials for recovery.
+gs_0146,account_login,hard,account_login,0.95,Customer is unable to recover the password for the specific account associated with their premium subscription.
+gs_0147,premium_billing,hard,premium_billing,0.9,Issue involves managing a Family plan subscription and member invitation process.
+gs_0148,premium_billing,hard,premium_billing,0.85,Account deactivation is a direct consequence of a billing/payment reversal dispute.
+gs_0149,playback_issue,hard,playback_issue,0.9,Audio playback stops unexpectedly after a short duration while streaming.
+gs_0150,device_platform,easy,device_platform,0.98,Spotify Connect device discovery failure on PlayStation 4.

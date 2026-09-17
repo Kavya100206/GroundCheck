@@ -60,14 +60,16 @@ The system operates across distinct, single-responsibility components with stric
 
 The table below prioritizes reporting integrity by leading with the **stratified held-out evaluation split as the primary honest out-of-sample estimate**, presenting the delivered two-threshold architecture alongside the original Phase 4 baseline:
 
-| Metric | Baseline 1 (Always Escalate) | Baseline 3 ($\tau=0.35$ Locked Hurdle) | Phase 4 Baseline (Held-Out Split, $\tau=0.73$) | **DELIVERED ARCHITECTURE: Held-Out Split ($N=76$, $\tau \in [0.65, 0.73]$ + Check)** | Secondary Bound (Full $N=151$, $\tau=0.73$, Calib Leakage) | Margin vs Phase 4 Baseline (Held-Out) |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Overall Escalation Accuracy** | 45.03% (68/151) | 53.00% (80/151) | 52.63% (40/76) | **64.47% (49/76)** | *54.97% (83/151)* | **+11.84% pts** |
-| **Easy Tier Accuracy** | 60.00% (30/50) | 56.00% (28/50) | 60.00% (15/25) | **68.00% (17/25)** | *64.00% (32/50)* | **+8.00% pts** |
-| **Hard Tier Accuracy** | 37.62% (38/101) | 51.50% (52/101) | 49.02% (25/51) | **62.75% (32/51)** | *50.50% (51/101)* | **+13.73% pts** |
-| **False Auto-Handles (FAH)** *(Safety Failure)* | **0/68 (0.0%)** | 27/68 (39.71%) | 7/35 (20.00%) | **2/35 (5.71%)** | *10/68 (14.71%)* | **-14.29% pts (-71.4% rel)** |
-| **False Escalations (FE)** *(Automation Loss)* | 83/83 (100.0%) | **44/83 (53.01%)** | 29/41 (70.73%) | **25/41 (60.98%)** | *58/83 (69.88%)* | **-9.75% pts (-13.8% rel)** |
-| **Asymmetric Cost ($4 \times \text{FAH} + 1 \times \text{FE}$)** | 83.0 | 152.0 | 57.0 | **33.0** | *98.0* | **-24.0 (-42.1% rel)** |
+| Metric | Baseline 1 (Always Escalate) | Baseline 3 ($\tau=0.35$ Hurdle) | Phase 4 Baseline (Held-Out, $\tau=0.73$) | **DELIVERED: Held-Out ($N=76$, Two-Threshold)** | *DELIVERED: Full Set ($N=151$, Calib Leakage)\** | *Phase 4 Full Set ($N=151$, Calib Leakage)\** | Margin vs Phase 4 (Held-Out) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Overall Escalation Accuracy** | 45.03% (68/151) | 53.00% (80/151) | 52.63% (40/76) | **64.47% (49/76)** | *60.93% (92/151)* | *54.97% (83/151)* | **+11.84% pts** |
+| **Easy Tier Accuracy** | 60.00% (30/50) | 56.00% (28/50) | 60.00% (15/25) | **68.00% (17/25)** | *62.00% (31/50)* | *64.00% (32/50)* | **+8.00% pts** |
+| **Hard Tier Accuracy** | 37.62% (38/101) | 51.50% (52/101) | 49.02% (25/51) | **62.75% (32/51)** | *60.40% (61/101)* | *50.50% (51/101)* | **+13.73% pts** |
+| **False Auto-Handles (FAH)** *(Safety Failure)* | **0/68 (0.0%)** | 27/68 (39.71%) | 7/35 (20.00%) | **2/35 (5.71%)** | *2/68 (2.94%)* | *10/68 (14.71%)* | **-14.29% pts (-71.4% rel)** |
+| **False Escalations (FE)** *(Automation Loss)* | 83/83 (100.0%) | **44/83 (53.01%)** | 29/41 (70.73%) | **25/41 (60.98%)** | *57/83 (68.67%)* | *58/83 (69.88%)* | **-9.75% pts (-13.8% rel)** |
+| **Asymmetric Cost ($4 \times \text{FAH} + 1 \times \text{FE}$)** | 83.0 | 152.0 | 57.0 | **33.0** | *65.0* | *98.0* | **-24.0 (-42.1% rel)** |
+
+*\*Note on Full-Set Bounds: Full-set figures include the 75-row calibration subset and should be read as optimistic bounds; the frozen held-out split ($N=76$) remains the primary honest estimate of out-of-sample generalization.*
 
 ### Classification Benchmark (Phase 3)
 - **Model:** `qwen/qwen3.8-27b` (few-shot prompted, 0 golden-set contamination).
@@ -127,7 +129,7 @@ python3 -m eval.validate_judge
 ```
 
 ### 3. Verification Mode B (Default Quickstart): Cold-Start on Stratified Subsample (< 15 Minutes)
-*Default cold-start path for reviewers confirming the pipeline genuinely works end-to-end with live multi-model LLM calls (tested wall-clock: ~2.5 to 3.5 min $\ll$ 15 min limit):*
+*Default cold-start path for reviewers confirming the pipeline genuinely works end-to-end with live multi-model LLM calls (tested wall-clock: ~6.5 to 7 min combined $\ll$ 15 min limit):*
 ```bash
 # 1. Train and evaluate Baselines 1-3 (8.8s)
 python3 src/baselines.py

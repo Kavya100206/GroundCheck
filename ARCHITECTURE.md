@@ -185,7 +185,7 @@ This boundary is treated as a first-class architectural principle rather than an
 
 ---
 
-## 5. Reproducibility Mechanics (< 15 Minute Benchmark)
+## 5. Reproducibility Mechanics
 
 - **Strict Subsample Scope:** Pipeline operates over a 151-row golden set and an 8,310-document visible-resolution index, eliminating the multi-million row TWCS loading bottleneck.
 - **Offline Model Caching:** SentenceTransformers runs with `HF_HUB_OFFLINE=1`, loading cached `all-MiniLM-L6-v2` embeddings in <1 second without network retries.

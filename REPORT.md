@@ -56,7 +56,7 @@ Quality is decomposed into three independent axes:
 Every engineering omission was an intentional architectural tradeoff informed by empirical data:
 
 1. **Multi-Lingual Processing (English-Only Restriction):** Screened out non-English traffic (~4%) to focus strictly on semantic nuance and policy adherence in the primary language (Decision Log Entry 5).
-2. **Full TWCS Ingestion & Real-Time Streaming:** Ingesting 2.8M rows in real-time creates a severe memory and latency bottleneck. Scoped the operational pipeline to an 8,310-document visible-resolution index and a 151-row golden set, guaranteeing cold-start reproduction under 3.5 minutes (Decision Log Entry 3, Entry 6).
+2. **Full TWCS Ingestion & Real-Time Streaming:** Ingesting 2.8M rows in real-time creates a severe memory and latency bottleneck. Scoped the operational pipeline to an 8,310-document visible-resolution index and a 151-row golden set, guaranteeing cold-start reproduction sub-15-minutes via the default 38-row stratified subsample (~6.5–7 min combined), with full 151-row regeneration available as an optional ~24-minute path (Decision Log Entry 3, Entry 6, Entry 31).
 3. **Weight Fine-Tuning:** Avoided opaque gradient updates; prioritized few-shot in-context learning and dense retrieval for live auditability and rapid policy iteration (Decision Log Entry 8).
 4. **Synthetic URL Generation:** Stripped all synthesized external support URLs from SOPs and banned link generation in drafter and judge prompts to eliminate hallucination risk (Decision Log Entry 17).
 5. **Direct Tweet-to-Tweet Grounding for All Traffic:** Abandoned pure nearest-neighbor historical tweet reply copying after proving that 78.0% of historical brand replies lack standalone public resolutions. Built `CuratedPolicyReference` (17 SOPs) as a deterministic fallback (Decision Log Entry 16).
@@ -108,14 +108,16 @@ An upgraded decision engine was designed, calibrated, and evaluated targeting th
 #### Empirical Evaluation Across Splits (Locked Metric $w_{FAH}=4.0, w_{FE}=1.0$)
 Hyperparameters ($\tau_{low}, \tau_{high}$, partition policy) were searched strictly on the **75-row calibration split** (`calib_df`, 42 auto_handle, 33 escalate), locked, and subsequently evaluated once on the frozen **76-row held-out split** (`held_out_df`, 41 auto_handle, 35 escalate):
 
-| Metric | Phase 4 Baseline (Calib Split, N=75) | Phase 4 Baseline (Held-Out Split, N=76) | **Improved Engine (Calib Split, N=75)** | **IMPROVED ENGINE: Held-Out Split (N=76)** | **Overfitting Gap (Held-Out − Calib)** | Margin vs Phase 4 (Held-Out) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Pipeline Config** | Scoped, $\tau=0.73$, No Check | Scoped, $\tau=0.73$, No Check | Scoped, $\tau \in [0.65, 0.73]$, Checked | **Scoped, $\tau \in [0.65, 0.73]$, Checked** | — | — |
-| **Auditor Model** | None | None | `openai/gpt-oss-120b` | `openai/gpt-oss-120b` | — | — |
-| **Overall Accuracy** | 57.33% (43/75) | 52.63% (40/76) | 57.33% (43/75) | **64.47% (49/76)** | **+7.14%** | **+11.84% pts** |
-| **False Auto-Handles (FAH)** | 9.09% (3/33) | 20.00% (7/35) | 0.00% (0/33) | **5.71% (2/35)** | **+5.71% (+2 cases)** | **-14.29% pts (-71.4% rel)** |
-| **False Escalations (FE)** | 69.05% (29/42) | 70.73% (29/41) | 76.19% (32/42) | **60.98% (25/41)** | **-15.21% (-7 cases)** | **-9.75% pts (-13.8% rel)** |
-| **Asymmetric Cost ($4 \times \text{FAH} + 1 \times \text{FE}$)** | 41.0 | 57.0 | 32.0 | **33.0** | **+1.0 (+3.1%)** | **-24.0 (-42.1% rel)** |
+| Metric | Phase 4 Baseline (Calib Split, N=75) | Phase 4 Baseline (Held-Out Split, N=76) | **Improved Engine (Calib Split, N=75)** | **IMPROVED ENGINE: Held-Out Split (N=76)** | *Improved Engine: Full Set (N=151)\** | **Overfitting Gap (Held-Out − Calib)** | Margin vs Phase 4 (Held-Out) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Pipeline Config** | Scoped, $\tau=0.73$, No Check | Scoped, $\tau=0.73$, No Check | Scoped, $\tau \in [0.65, 0.73]$, Checked | **Scoped, $\tau \in [0.65, 0.73]$, Checked** | *Scoped, $\tau \in [0.65, 0.73]$, Checked* | — | — |
+| **Auditor Model** | None | None | `openai/gpt-oss-120b` | `openai/gpt-oss-120b` | `openai/gpt-oss-120b` | — | — |
+| **Overall Accuracy** | 57.33% (43/75) | 52.63% (40/76) | 57.33% (43/75) | **64.47% (49/76)** | *60.93% (92/151)* | **+7.14%** | **+11.84% pts** |
+| **False Auto-Handles (FAH)** | 9.09% (3/33) | 20.00% (7/35) | 0.00% (0/33) | **5.71% (2/35)** | *2.94% (2/68)* | **+5.71% (+2 cases)** | **-14.29% pts (-71.4% rel)** |
+| **False Escalations (FE)** | 69.05% (29/42) | 70.73% (29/41) | 76.19% (32/42) | **60.98% (25/41)** | *68.67% (57/83)* | **-15.21% (-7 cases)** | **-9.75% pts (-13.8% rel)** |
+| **Asymmetric Cost ($4 \times \text{FAH} + 1 \times \text{FE}$)** | 41.0 | 57.0 | 32.0 | **33.0** | *65.0* | **+1.0 (+3.1%)** | **-24.0 (-42.1% rel)** |
+
+*\*Note on Full-Set Bound: Full-set figures include the 75-row calibration subset and should be read as an optimistic bound; the frozen held-out split ($N=76$) remains the primary honest estimate for out-of-sample generalization.*
 
 #### Failure Mode Resolution & Overfitting Gap Analysis
 1. **Failure Mode 3 Elimination:** On the held-out split, queries like `gs_0004` (shuffle algorithm repetition, $s=0.766$) and `gs_0111` (iOS 11 headphone control regression, $s=0.758$) scored $\ge 0.73$ and were falsely auto-handled by Phase 4. The `gpt-oss-120b` resolution checker explicitly identified both as unresolvable client-side issues and issued an immediate veto $\to$ **both correctly escalated**.
@@ -219,7 +221,7 @@ Crucially, *procedure sycophancy* (Judge PASS, Human FAIL — 3 cases) and *evid
 A core requirement of this project is explicitly confronting the ways headline metrics can flatter a system:
 
 1. **Threshold Calibration Leakage:**
-   Reporting $54.97\%$ accuracy and $14.71\%$ FAH on the full 151 rows introduces threshold snooping risk, as $\tau=0.73$ was tuned against that distribution. On the stratified held-out evaluation split ($N=76$), **FAH degraded to 20.00%**, failing the 15% hurdle.
+   Reporting $54.97\%$ accuracy and $14.71\%$ FAH on the full 151 rows introduces threshold snooping risk, as $\tau=0.73$ was tuned against that distribution. On the stratified held-out evaluation split ($N=76$), **FAH degraded to 20.00%**, failing the 15% hurdle. Crucially, this identical calibration-leakage mechanism recurs in the delivered two-threshold architecture: reporting $60.93\%$ accuracy, $2.94\%$ FAH (2/68), and a cost of $65.0$ on the full 151 rows flatters performance because the underlying thresholds ($\tau_{low}=0.65, \tau_{high}=0.73$) and resolution checker prompt were tuned against the 75-row calibration half (which achieved an artificially pristine $0.00\%$ FAH); on the unseen held-out split ($N=76$), FAH relaxes to the honest out-of-sample estimate of **5.71% (2/35)** and cost to **33.0**.
 2. **The Headline FAH Illusion & The Single-Threshold Automation Collapse:**
    Claiming a "63% reduction in False Auto-Handles (from 39.7% to 14.7%)" sounds like a major safety breakthrough. But under Phase 4's single-threshold design, that number was deeply misleading without its operational counterpart: **False Escalations surged to 69.88%**, routing 70% of routine customer issues to human agents. The original finding framed this automation collapse as an inescapable law of customer support routing. However, the post-Phase-6 architecture improvement (Section 6.3.1) revealed that **the collapse was not fundamentally inescapable, but specifically an artifact of single-scalar similarity thresholding**. By introducing a decoupled two-threshold gate with independent LLM semantic resolution verification, held-out FAH dropped to **5.71%** while simultaneously pulling False Escalations down to **60.98%** (and reducing asymmetric cost by 42.1%). Precision discrimination requires semantic verification rather than scalar cutoff tuning.
 3. **The Groundedness Reality Gap (22% vs. 72%):**

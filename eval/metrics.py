@@ -109,8 +109,8 @@ def compute_escalation_split_metrics(
     fe_total = len(gold_auto)
     fe_rate = float(fe_count / fe_total) if fe_total > 0 else 0.0
 
-    # Asymmetric weighted cost
-    asymmetric_cost = float(w_fah * fah_rate + w_fe * fe_rate)
+    # Asymmetric weighted cost (count-based: 4*FAH + 1*FE)
+    asymmetric_cost = float(w_fah * fah_count + w_fe * fe_count)
 
     # Breakdown by difficulty tier
     tier_breakdown = {}
@@ -185,7 +185,7 @@ def compute_escalation_metrics(
         "fe_rate": 1.0,
         "fe_count": 83,
         "fe_total": 83,
-        "asymmetric_cost": float(w_fah * 0.0 + w_fe * 1.0)
+        "asymmetric_cost": float(w_fah * 0 + w_fe * 83)
     }
     baseline3_locked_hurdle = {
         "overall_accuracy": 80 / 151,
@@ -195,7 +195,7 @@ def compute_escalation_metrics(
         "fe_rate": 44 / 83,
         "fe_count": 44,
         "fe_total": 83,
-        "asymmetric_cost": float(w_fah * (27 / 68) + w_fe * (44 / 83))
+        "asymmetric_cost": float(w_fah * 27 + w_fe * 44)
     }
 
     return {
@@ -258,8 +258,8 @@ def print_evaluation_report(metrics: Dict[str, Any]) -> None:
     b3 = esc["baselines"]["baseline_3_locked_hurdle"]
 
     print("\n--- 2. ESCALATION DECISION PERFORMANCE & ASYMMETRIC LOSS ---")
-    print(f"{'Metric':<32} | {'Baseline 1':<12} | {'Baseline 3':<12} | {'Held-Out (N=76)':<16} | {'Full Set (N=151)':<16}")
-    print("-" * 100)
+    print(f"{'Metric':<32} | {'Baseline 1':<12} | {'Baseline 3':<12} | {'Delivered Held-Out (N=76)':<26} | {'Delivered Full Set (N=151)*':<28}")
+    print("-" * 122)
     b1_fah = f"{b1['fah_count']}/{b1['fah_total']}"
     b3_fah = f"{b3['fah_count']}/{b3['fah_total']}"
     p_held_fah = f"{p_held['fah_count']}/{p_held['fah_total']}"
@@ -270,12 +270,13 @@ def print_evaluation_report(metrics: Dict[str, Any]) -> None:
     p_held_fe = f"{p_held['fe_count']}/{p_held['fe_total']}"
     s_full_fe = f"{s_full['fe_count']}/{s_full['fe_total']}"
 
-    print(f"{'Overall Accuracy':<32} | {b1['overall_accuracy']*100:>10.2f}% | {b3['overall_accuracy']*100:>10.2f}% | {p_held['overall_accuracy']*100:>14.2f}% | {s_full['overall_accuracy']*100:>14.2f}%")
-    print(f"{'False Auto-Handles (FAH)':<32} | {b1['fah_rate']*100:>10.2f}% | {b3['fah_rate']*100:>10.2f}% | {p_held['fah_rate']*100:>14.2f}% | {s_full['fah_rate']*100:>14.2f}%")
-    print(f"{'  FAH Count / Total':<32} | {b1_fah:>12} | {b3_fah:>12} | {p_held_fah:>16} | {s_full_fah:>16}")
-    print(f"{'False Escalations (FE)':<32} | {b1['fe_rate']*100:>10.2f}% | {b3['fe_rate']*100:>10.2f}% | {p_held['fe_rate']*100:>14.2f}% | {s_full['fe_rate']*100:>14.2f}%")
-    print(f"{'  FE Count / Total':<32} | {b1_fe:>12} | {b3_fe:>12} | {p_held_fe:>16} | {s_full_fe:>16}")
-    print(f"{'Asymmetric Cost (4*FAH + 1*FE)':<32} | {b1['asymmetric_cost']:>12.3f} | {b3['asymmetric_cost']:>12.3f} | {p_held['asymmetric_cost']:>16.3f} | {s_full['asymmetric_cost']:>16.3f}")
+    print(f"{'Overall Accuracy':<32} | {b1['overall_accuracy']*100:>10.2f}% | {b3['overall_accuracy']*100:>10.2f}% | {p_held['overall_accuracy']*100:>24.2f}% | {s_full['overall_accuracy']*100:>26.2f}%")
+    print(f"{'False Auto-Handles (FAH)':<32} | {b1['fah_rate']*100:>10.2f}% | {b3['fah_rate']*100:>10.2f}% | {p_held['fah_rate']*100:>24.2f}% | {s_full['fah_rate']*100:>26.2f}%")
+    print(f"{'  FAH Count / Total':<32} | {b1_fah:>12} | {b3_fah:>12} | {p_held_fah:>26} | {s_full_fah:>28}")
+    print(f"{'False Escalations (FE)':<32} | {b1['fe_rate']*100:>10.2f}% | {b3['fe_rate']*100:>10.2f}% | {p_held['fe_rate']*100:>24.2f}% | {s_full['fe_rate']*100:>26.2f}%")
+    print(f"{'  FE Count / Total':<32} | {b1_fe:>12} | {b3_fe:>12} | {p_held_fe:>26} | {s_full_fe:>28}")
+    print(f"{'Asymmetric Cost (4*FAH + 1*FE)':<32} | {b1['asymmetric_cost']:>12.1f} | {b3['asymmetric_cost']:>12.1f} | {p_held['asymmetric_cost']:>26.1f} | {s_full['asymmetric_cost']:>28.1f}")
+    print("*Note: Delivered Full Set includes the calibration split (optimistic bound); Held-Out (N=76) is primary.")
 
     print("\nHeld-Out Split Difficulty Breakdown:")
     easy_h = p_held["by_difficulty_tier"]["easy"]

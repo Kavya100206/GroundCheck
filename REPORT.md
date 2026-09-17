@@ -81,11 +81,11 @@ Evaluated across all 132 in-taxonomy golden set rows using pure chat completions
 - **Per-Intent F1s:** `account_login` = 0.929 (26/27), `premium_billing` = 0.913 (21/23), `playback_issue` = 0.805 (35/52), `device_platform` = 0.765 (13/15), `app_technical` = 0.683 (14/15).
 - **Hard Tier Robustness:** **83.84%** accuracy (83/99).
 
-### 6.3 Phase 4: Escalation Decision Performance (Principled $\tau = 0.73$)
+### 6.3 Phase 4 Baseline: Single-Threshold Escalation Performance ($\tau = 0.73$)
 
-Reporting structurally leads with the **Held-Out Evaluation Split ($N=76$) as the primary honest estimate**, presenting the full 151-row figure second as an optimistic upper bound reflecting calibration leakage:
+Reporting structurally leads with the **Held-Out Evaluation Split ($N=76$) as the primary honest estimate for the original Phase 4 single-threshold design** (with the delivered post-Phase-6 two-threshold architecture detailed in §6.3.1 below), presenting the full 151-row figure second as an optimistic upper bound reflecting calibration leakage:
 
-| Metric | Baseline 1 (Always Escalate) | Baseline 3 ($\tau=0.35$ Locked Hurdle) | **PRIMARY HONEST ESTIMATE: Held-Out Split ($N=76$, $\tau=0.73$)** | **SECONDARY BOUND: Full Golden Set ($N=151$, $\tau=0.73$, Calib Leakage)** | Margin vs Baseline 3 (Primary Estimate) |
+| Metric | Baseline 1 (Always Escalate) | Baseline 3 ($\tau=0.35$ Locked Hurdle) | **Phase 4 Baseline: Held-Out Split ($N=76$, $\tau=0.73$)** | **Phase 4 Secondary Bound: Full Golden Set ($N=151$, $\tau=0.73$, Calib Leakage)** | Margin vs Baseline 3 (Held-Out) |
 |---|:---:|:---:|:---:|:---:|:---:|
 | **Overall Escalation Accuracy** | 45.03% (68/151) | 53.00% (80/151) | **52.63% (40/76)** | *54.97% (83/151)* | -0.37% |
 | **Easy Tier Accuracy** | 60.00% (30/50) | 56.00% (28/50) | **60.00% (15/25)** | *64.00% (32/50)* | +4.00% |

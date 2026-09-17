@@ -109,12 +109,15 @@ graph TD
 
 ---
 
-## 3. Comprehensive Mitigation Blueprint
+## 3. Comprehensive Mitigation Blueprint & Post-Phase-6 Status
 
-| Failure Mode | Root Cause | Proposed Architectural Mitigation |
-|---|---|---|
-| **FM 1: Upstream Intent Bleed** | Hard-partitioned retrieval spaces | **Soft Multi-Partition Retrieval:** Query top-2 predicted intent corpora with cross-encoder re-ranking. |
-| **FM 2: Colloquial Dead Zone** | Semantic distance between informal slang and formal SOPs | **Query Expansion / Paraphrase Rewriting:** Rewriting colloquial user queries into standard technical symptoms before vector embedding. |
-| **FM 3: Procedure Sycophancy** | Drafter & Judge anchor on literal SOP tokens without verifying symptom alignment | **Two-Stage Decoupled Evaluation:** Step 1 asserts symptom-problem alignment; Step 2 asserts factual evidence grounding. |
-| **FM 4: SOP Misattribution** | Lexical overlap on generic billing tokens | **Negative Exemplar Filtering:** Require explicit mention of "Family" or "Invite" before activating Family Plan SOPs. |
-| **FM 5: Resolution Deficit** | 78% of historical brand replies are DM deflections | **Synthetic Grounding Expansion:** Expand CuratedPolicyReference from 17 to 50 granular, verified SOPs. |
+| Failure Mode | Root Cause | Proposed Architectural Mitigation | Post-Phase-6 Status & Empirical Resolution |
+|---|---|---|---|
+| **FM 1: Upstream Intent Bleed** | Hard-partitioned retrieval spaces | **Soft Multi-Partition Retrieval:** Query top-2 predicted intent corpora with cross-encoder re-ranking. | **Investigated / Open Work:** Evaluated multi-partition (Global) retrieval in post-Phase-6 calibration; however, single-partition Scoped retrieval proved superior on held-out data (64.47% vs 61.84% accuracy, Cost 33.0 vs 35.0) because unconstrained global search retrieved tangential cross-domain hits. Scoped retrieval was retained; full resolution requires cross-encoder re-ranking (see [`REPORT.md` §9.2](file:///Users/kavya/Desktop/Groundcheck/REPORT.md#92-post-phase-6-architectural-roadmap)). |
+| **FM 2: Colloquial Dead Zone** | Semantic distance between informal slang and formal SOPs | **Two-Threshold Decoupled Verification:** Recover queries in $[0.65, 0.73)$ dead zone via LLM semantic check. | **Partially Resolved:** Lowering threshold to $\tau_{low}=0.65$ with independent `openai/gpt-oss-120b` verification recovered colloquial complaints (e.g. `gs_0006`, `gs_0008`, `gs_0012`), cutting held-out False Escalations from 70.73% to 60.98% without safety sacrifice. |
+| **FM 3: Procedure Sycophancy** | Drafter & Judge anchor on literal SOP tokens without verifying symptom alignment | **Independent Semantic Resolution Verification:** Pre-drafting auditor checks if candidate procedure actually resolves customer's symptom. | **Resolved:** Implemented `src/resolution_check.py` via `openai/gpt-oss-120b` inline auditor with hard veto capability on brush-offs (`gs_0004`, `gs_0111`), driving held-out False Auto-Handles down from 20.00% to 5.71% (-71.4% relative). |
+| **FM 4: SOP Misattribution** | Lexical overlap on generic billing tokens | **Negative Exemplar Filtering:** Require explicit mention of "Family" or "Invite" before activating Family Plan SOPs. | *Pending Phase 7 (Roadmapped in [`REPORT.md` §9.2](file:///Users/kavya/Desktop/Groundcheck/REPORT.md#92-post-phase-6-architectural-roadmap)).* |
+| **FM 5: Resolution Deficit** | 78% of historical brand replies are DM deflections | **Curated Policy Grounding:** Dual grounding architecture with 17 curated SOPs in `src/policy.py`. | *Resolved in Phase 4 via dual grounding fallback (`src/policy.py`).* |
+
+> [!NOTE]
+> **Historical Phase Record Update:** This document remains the historical record of the Phase 6 Failure Taxonomy as characterized on September 16, 2026. The architectural remediations, calibration grid, and frozen held-out validation results are documented in [`REPORT.md` §6.3.1](file:///Users/kavya/Desktop/Groundcheck/REPORT.md#631-post-phase-6-architecture-improvement-two-threshold-calibrated-engine--independent-resolution-checker) and [`DECISION_LOG.md` Entry 30](file:///Users/kavya/Desktop/Groundcheck/DECISION_LOG.md#executive-phase-index).

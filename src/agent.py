@@ -17,6 +17,7 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import re
 import time
 import json
 import argparse
@@ -32,6 +33,7 @@ from src.resolution_check import ProblemResolutionChecker
 from src.drafter import ReplyDrafter
 
 GOLDEN_PATH = "/Users/kavya/Desktop/Groundcheck/golden_set_to_label.csv"
+CLASSIFIER_PREDICTIONS_PATH = "/Users/kavya/Desktop/Groundcheck/src/classifier_predictions.csv"
 AGENT_PREDICTIONS_CACHE = "/Users/kavya/Desktop/Groundcheck/src/agent_predictions_golden151.csv"
 
 class SpotifySupportAgent:
@@ -44,8 +46,8 @@ class SpotifySupportAgent:
         use_resolution_check: bool = True
     ):
         self.tau = tau
-        self.tau_low = tau_low
-        self.tau_high = tau_high
+        self.tau_low = tau if not use_resolution_check else tau_low
+        self.tau_high = tau if not use_resolution_check else tau_high
         self.retrieval_policy = retrieval_policy
         self.use_resolution_check = use_resolution_check
         print("Initializing SpotifySupportAgent pipeline...")
@@ -76,30 +78,33 @@ class SpotifySupportAgent:
         known_confidence: Optional[float] = None,
         cached_draft: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Run complete single-message inference pipeline."""
-        # Type safety & degenerate input guard
-        clean_text = strip_handle(customer_text) if customer_text is not None else ""
-        if not clean_text:
+        """
+        Execute full agent pipeline on a single customer message.
+        """
+        # 0. Intercept empty, None, or degenerate handle-only inputs
+        clean_text = customer_text.strip() if customer_text is not None else ""
+        text_without_handles = re.sub(r"@\w+", "", clean_text).strip()
+        if not clean_text or not text_without_handles or len(text_without_handles) < 3:
             return {
                 "id": message_id,
-                "predicted_intent": "other",
-                "drafted_reply": "We’re here to help! Could you please provide more details about the issue you’re experiencing so our team can look into it?",
+                "predicted_intent": "playback_issue",
+                "drafted_reply": "We’re looking into this issue and routing your case to our specialist team for assistance. Thank you for your patience.",
                 "decision": "escalate",
-                "decision_reason": "Customer message is empty or too short to classify; routing to specialist team",
+                "decision_reason": "Customer message is empty or too short to classify",
                 "grounding_source": "none",
-                "evidence_used": ["Degenerate input: Empty or handle-only message"],
+                "evidence_used": ["Escalation Routing: Degenerate or empty customer input"],
                 "gate_triggered": "degenerate_input",
                 "calibrated_confidence": 0.0
             }
 
-        # 1. Intent Classification (reuse cached result if provided)
+        # 1. Intent Classification
         if known_intent is not None:
             predicted_intent = known_intent
-            confidence = known_confidence if known_confidence is not None else 0.85
+            confidence = known_confidence if known_confidence is not None else 1.0
         else:
-            clf_result = self.classifier.classify(customer_text)
-            predicted_intent = clf_result.get("intent", "playback_issue")
-            confidence = clf_result.get("confidence", 0.8)
+            clf_res = self.classifier.classify(customer_text)
+            predicted_intent = clf_res["intent"]
+            confidence = clf_res["confidence"]
 
         # 2. Dense Semantic Retrieval
         if self.retrieval_policy == "global":
@@ -162,28 +167,36 @@ class SpotifySupportAgent:
             "calibrated_confidence": esc_result["calibrated_confidence"]
         }
 
-def evaluate_agent(tau: float = DEFAULT_TAU, use_cache: bool = True):
+def evaluate_agent(
+    tau_low: Optional[float] = 0.65,
+    tau_high: Optional[float] = 0.73,
+    policy: str = "scoped",
+    use_resolution_check: bool = True,
+    tau: float = DEFAULT_TAU,
+    use_cache: bool = True
+):
     """Run full agent evaluation over the 151 golden set rows with incremental persistence."""
+    mode_str = f"tau_low={tau_low}, tau_high={tau_high}, policy={policy}, check={use_resolution_check}"
     print(f"\n========================================================")
-    print(f"PHASE 4 AGENT EVALUATION (N=151 Golden Set, tau={tau:.2f})")
+    print(f"SPOTIFY SUPPORT AGENT EVALUATION (N=151 Golden Set, {mode_str})")
     print(f"========================================================")
     golden_df = pd.read_csv(GOLDEN_PATH)
     y_true = golden_df["gold_decision"]
     easy_mask = golden_df["difficulty_tier"] == "easy"
     hard_mask = golden_df["difficulty_tier"] == "hard"
 
-    # Load cached classifier predictions to avoid redundant LLM calls
     cached_clf = {}
-    clf_cache_path = "/Users/kavya/Desktop/Groundcheck/src/classifier_predictions.csv"
-    if os.path.exists(clf_cache_path):
-        c_df = pd.read_csv(clf_cache_path)
-        for _, r in c_df.iterrows():
-            cached_clf[str(r["id"])] = (str(r["predicted_intent"]), float(r.get("confidence", 0.85)))
-        print(f"Loaded {len(cached_clf)} pre-computed classifications from {clf_cache_path}")
+    if use_cache and os.path.exists(CLASSIFIER_PREDICTIONS_PATH):
+        try:
+            clf_df = pd.read_csv(CLASSIFIER_PREDICTIONS_PATH)
+            for _, r in clf_df.iterrows():
+                cached_clf[str(r["id"])] = (r["predicted_intent"], float(r.get("confidence", 1.0)))
+            print(f"Loaded {len(cached_clf)} cached classifier predictions from disk.")
+        except Exception:
+            cached_clf = {}
 
-    # Check for existing partial or complete agent runs
     existing_records = {}
-    if os.path.exists(AGENT_PREDICTIONS_CACHE):
+    if use_cache and os.path.exists(AGENT_PREDICTIONS_CACHE):
         try:
             cached_df = pd.read_csv(AGENT_PREDICTIONS_CACHE)
             for _, r in cached_df.iterrows():
@@ -192,8 +205,14 @@ def evaluate_agent(tau: float = DEFAULT_TAU, use_cache: bool = True):
         except Exception:
             existing_records = {}
 
-    agent = SpotifySupportAgent(tau=tau)
-    print(f"Executing agent inference over {len(golden_df)} golden set threads (tau={tau:.2f})...")
+    agent = SpotifySupportAgent(
+        tau=tau,
+        tau_low=tau_low,
+        tau_high=tau_high,
+        retrieval_policy=policy,
+        use_resolution_check=use_resolution_check
+    )
+    print(f"Executing agent inference over {len(golden_df)} golden set threads ({mode_str})...")
     start_time = time.time()
     records = []
 
@@ -214,7 +233,7 @@ def evaluate_agent(tau: float = DEFAULT_TAU, use_cache: bool = True):
         out["gold_intent"] = row["gold_intent"]
         records.append(out)
 
-        # Incremental save every 10 rows
+        # Incremental save every 25 rows
         if (idx + 1) % 25 == 0 or (idx + 1) == len(golden_df):
             temp_df = pd.DataFrame(records)
             temp_df.to_csv(AGENT_PREDICTIONS_CACHE, index=False)
@@ -232,8 +251,34 @@ def evaluate_agent(tau: float = DEFAULT_TAU, use_cache: bool = True):
     fah = sum(1 for yt, yp in zip(y_true, y_pred) if yt == "escalate" and yp == "auto_handle")
     fe = sum(1 for yt, yp in zip(y_true, y_pred) if yt == "auto_handle" and yp == "escalate")
 
+    # Stratified Held-Out Evaluation Split (N=76)
+    from sklearn.model_selection import train_test_split
+    strat = pred_df["gold_intent"] + "_" + pred_df["difficulty_tier"]
+    calib_df, held_out_df = train_test_split(
+        pred_df,
+        test_size=0.5,
+        stratify=strat,
+        random_state=42
+    )
+    y_true_ho = held_out_df["gold_decision"]
+    y_pred_ho = held_out_df["decision"]
+    acc_ho = accuracy_score(y_true_ho, y_pred_ho)
+    fah_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "escalate" and yp == "auto_handle")
+    fah_ho_total = sum(y_true_ho == "escalate")
+    fe_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "auto_handle" and yp == "escalate")
+    fe_ho_total = sum(y_true_ho == "auto_handle")
+    cost_ho = 4.0 * fah_ho + 1.0 * fe_ho
+
     print("\n--------------------------------------------------------")
-    print("ESCALATION DECISION PERFORMANCE VS BASELINE 3 (tau=0.35)")
+    print("PRIMARY HONEST ESTIMATE: HELD-OUT SPLIT (N=76)")
+    print("--------------------------------------------------------")
+    print(f"Overall Escalation Accuracy: {acc_ho*100:.2f}% ({sum(y_true_ho == y_pred_ho)}/{len(held_out_df)})")
+    print(f"False Auto-Handles (FAH):    {fah_ho:2d}/{fah_ho_total} ({fah_ho/fah_ho_total*100:4.2f}%)")
+    print(f"False Escalations (FE):      {fe_ho:2d}/{fe_ho_total} ({fe_ho/fe_ho_total*100:4.2f}%)")
+    print(f"Asymmetric Cost (4*FAH+1*FE): {cost_ho:.1f}")
+
+    print("\n--------------------------------------------------------")
+    print("SECONDARY BOUND: FULL GOLDEN SET (N=151)")
     print("--------------------------------------------------------")
     print(f"Overall Escalation Accuracy: {acc_overall*100:.2f}% (Baseline 3: 53.00%) -> Margin: {acc_overall*100 - 53.0:+.2f}%")
     print(f"  Easy Tier Accuracy (N={easy_mask.sum()}):  {acc_easy*100:.2f}% (Baseline 3: 56.00%)")
@@ -267,9 +312,20 @@ def evaluate_agent(tau: float = DEFAULT_TAU, use_cache: bool = True):
     }
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--tau", type=float, default=DEFAULT_TAU, help="Calibrated confidence threshold")
+    parser = argparse.ArgumentParser(description="Run SpotifySupportAgent evaluation over golden set.")
+    parser.add_argument("--tau-low", type=float, default=0.65, help="Lower similarity threshold for LLM verification (default: 0.65)")
+    parser.add_argument("--tau-high", type=float, default=0.73, help="Upper similarity threshold (default: 0.73)")
+    parser.add_argument("--policy", type=str, default="scoped", choices=["scoped", "global"], help="Retrieval partition policy (default: scoped)")
+    parser.add_argument("--no-check", action="store_true", help="Disable LLM problem-resolution check (reverts to scalar cutoff)")
+    parser.add_argument("--tau", type=float, default=DEFAULT_TAU, help="Fallback scalar threshold if thresholds unspecified")
     parser.add_argument("--no-cache", action="store_true", help="Force re-inference without cache")
     args = parser.parse_args()
 
-    evaluate_agent(tau=args.tau, use_cache=not args.no_cache)
+    evaluate_agent(
+        tau_low=args.tau_low,
+        tau_high=args.tau_high,
+        policy=args.policy,
+        use_resolution_check=not args.no_check,
+        tau=args.tau,
+        use_cache=not args.no_cache
+    )

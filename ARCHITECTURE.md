@@ -14,33 +14,36 @@ The agent processes incoming customer inquiries through an end-to-end, multi-sta
                ▼
    [Few-Shot LLM Intent Classifier] (qwen/qwen3.8-27b)
                │
-               ├──────────────────────────────┐
-               ▼                              ▼
-  [Dense Semantic Retriever]       [Layer 1 Hard Rule Gates]
-  (all-MiniLM-L6-v2, top-1)        (Billing, Security, Legal,
-               │                    Exhausted, Feature Gap)
-               │                              │
-               ▼                              │
-  [Layer 2 Calibrated Boundary]               │
-  (tau = 0.73 proxy threshold)                │
-               │                              │
-               └──────────────┬───────────────┘
-                              ▼
-                 [Escalation Decision Engine]
-                     /                 \
-        (auto_handle)                   (escalate)
-              │                              │
-              ▼                              ▼
-    [Dual Grounding Resolver]       [Empathetic Routing Notice]
-    (retrieved_case / curated_sop)  (grounding_source: "none")
-              │                              │
-              └──────────────┬───────────────┘
-                             ▼
-                 [Grounded Reply Drafter]
-                   (qwen/qwen3.8-27b)
-                             │
-                             ▼
-              [Final Emitted Output Record]
+               ├────────────────────────────────┐
+               ▼                                ▼
+  [Dense Semantic Retriever]         [Layer 1 Hard Rule Gates]
+  (all-MiniLM-L6-v2, top-1)          (Billing, Security, Legal,
+               │                      Exhausted, Feature Gap)
+               ▼                                │
+  [Two-Threshold Gate & Auditor]                │
+  ├─ Sim < tau_low (0.65): Hard Escalate        │
+  ├─ Sim in [0.65, 0.73): Auto-Handle if YES    │
+  ├─ Sim >= tau_high (0.73): Auto-Handle / Veto │
+  │  [Independent Resolution Checker]           │
+  │  (openai/gpt-oss-120b, temperature 0.0)     │
+               │                                │
+               └────────────────┬───────────────┘
+                                ▼
+                   [Escalation Decision Engine]
+                       /                 \
+          (auto_handle)                   (escalate)
+                │                              │
+                ▼                              ▼
+      [Dual Grounding Resolver]       [Empathetic Routing Notice]
+      (retrieved_case / curated_sop)  (grounding_source: "none")
+                │                              │
+                └───────────────┬──────────────┘
+                                ▼
+                   [Grounded Reply Drafter]
+                     (qwen/qwen3.8-27b)
+                                │
+                                ▼
+                 [Final Emitted Output Record]
 ```
 
 1. **Ingest**: Raw customer tweet text (+ thread context for multi-turn interactions) is loaded.
@@ -48,7 +51,11 @@ The agent processes incoming customer inquiries through an end-to-end, multi-sta
 3. **Retrieve / Ground**: Using the predicted intent and message text, the dense semantic retriever searches the strict 8,310 visible-resolution corpus (`all-MiniLM-L6-v2`) for top-1 similar historical cases.
 4. **Escalation Decision**:
    - Case is evaluated against Layer 1 deterministic rule gates first (billing, security, legal, exhausted troubleshooting, feature gap). If matched, it escalates unconditionally.
-   - If no hard gate fires, Layer 2 evaluates retrieval similarity against the calibrated operational threshold ($\tau = 0.73$). If $s \ge 0.73$, it auto-handles; otherwise, it escalates.
+   - If no hard gate fires, Layer 2 evaluates retrieval similarity against a decoupled two-threshold gate ($\tau_{low}=0.65, \tau_{high}=0.73$) coupled with the independent Problem-Resolution Checker (`openai/gpt-oss-120b`):
+     - $s < \tau_{low} = 0.65$: Unconditional escalation (saves API latency and token costs).
+     - $s \in [0.65, 0.73)$: Auto-handle *only* if the independent resolution checker verifies that the candidate procedure actually resolves the customer's specific technical symptom (recovering colloquial queries from the dead zone).
+     - $s \ge \tau_{high} = 0.73$: Candidate accepted for auto-handling unless the resolution checker detects an unresolvable bug or procedural brush-off, in which case it issues an immediate hard veto (`resolution_check_veto`).
+   *(The original Phase 4 single-threshold $\tau=0.73$ scalar cutoff is preserved in code via `--no-check` as a baseline-of-record).*
 5. **Reply Drafting**: Conditioned on the decision and grounding evidence:
    - If `auto_handle`: resolves grounding through a dual mechanism (direct `retrieved_case` if concrete public steps exist, or `curated_sop` from `src/policy.py`). The LLM drafts an empathetic, procedural Twitter reply (<250 chars, zero synthetic URLs).
    - If `escalate`: generates an empathetic routing acknowledgment informing the customer their issue is being transferred to a specialist team, with zero troubleshooting advice.
@@ -74,15 +81,20 @@ The agent processes incoming customer inquiries through an end-to-end, multi-sta
 - **Boundary:** Deterministic domain fallback; ensures replies are never ungrounded.
 
 ### 2.4 Escalation Decision Engine ([`src/escalation.py`](file:///Users/kavya/Desktop/Groundcheck/src/escalation.py))
-- **Responsibility:** Decide `auto_handle` vs `escalate` with an explicit reason string and gate attribution.
-- **Implementation:** Two-layer hybrid architecture. Layer 1 hard regex gates + Layer 2 calibrated threshold ($\tau=0.73$). Highest-consequence decision in the pipeline; built as deterministic code.
+- **Responsibility:** Decide `auto_handle` vs `escalate` with an explicit reason string, gate attribution, and decision layer tagging.
+- **Implementation:** Two-layer hybrid architecture. Layer 1 deterministic regex gates + Layer 2 calibrated two-threshold boundary ($\tau_{low}=0.65, \tau_{high}=0.73$) coupled with the independent resolution checker. Built as pure deterministic control logic in code; no LLM self-reported confidence is permitted to decide routing.
 
-### 2.5 Reply Drafter ([`src/drafter.py`](file:///Users/kavya/Desktop/Groundcheck/src/drafter.py))
+### 2.5 Independent Resolution Checker ([`src/resolution_check.py`](file:///Users/kavya/Desktop/Groundcheck/src/resolution_check.py))
+- **Responsibility:** Audit candidate procedures inline before auto-handling to verify that the retrieved SOP or historical resolution directly and practically resolves the customer's specific technical symptom, preventing procedural brush-offs (FM3) and safely recovering colloquial complaints from the dead zone (FM2).
+- **Implementation:** Pinned chat completions via `openai/gpt-oss-120b` (temperature 0.0, 750 max tokens). Deliberately utilizes an independent, larger cross-architecture model family from the drafter/classifier (`qwen/qwen3.8-27b`) to eliminate correlated blind spots and avoid self-grading bias (following the precedent established in Decision Log Entry 20 for the Phase 5 judge). Employs persistent disk caching (`src/resolution_check_cache.json`) for instant, deterministic replayability.
+- **Boundary:** Inline escalation auditor; emits boolean `resolves_problem`, confidence score, and audit reason string. Does not draft customer replies or modify retrieval indices.
+
+### 2.6 Reply Drafter ([`src/drafter.py`](file:///Users/kavya/Desktop/Groundcheck/src/drafter.py))
 - **Responsibility:** Draft concise, empathetic customer-facing Twitter replies strictly constrained by verified evidence.
-- **Implementation:** Chat completion via `qwen/qwen3.8-27b` (temperature 0.0). Conditioned on query, intent, decision, and evidence. Enforces Twitter length (<250 chars) and strictly bans hallucinated URLs.
+- **Implementation:** Chat completion via `qwen/qwen3.8-27b` (temperature 0.0). Conditioned on query, intent, decision, and evidence. Enforces Twitter length (<250 chars), validates against synthetic URL hallucination via regex guardrails, and incorporates automated single-retry fallback on formatting failure.
 
-### 2.6 Evaluation Harness (Planned Phase 5)
-- **Responsibility:** Independent verification module evaluating classifier accuracy/F1, escalation metrics with asymmetric weighting, groundedness audit, and LLM-as-a-judge agreement across difficulty tiers.
+### 2.7 Evaluation Harness ([`eval/metrics.py`](file:///Users/kavya/Desktop/Groundcheck/eval/metrics.py), [`eval/judge.py`](file:///Users/kavya/Desktop/Groundcheck/eval/judge.py), [`eval/validate_judge.py`](file:///Users/kavya/Desktop/Groundcheck/eval/validate_judge.py))
+- **Responsibility:** Multi-layer evaluation suite computing classifier accuracy/F1, escalation metrics with asymmetric cost weighting ($4 \times \text{FAH} + 1 \times \text{FE}$), human-aligned groundedness/tone auditing via `openai/gpt-oss-120b`, and inter-annotator agreement (Cohen's Kappa) across difficulty tiers.
 
 ---
 
@@ -90,13 +102,18 @@ The agent processes incoming customer inquiries through an end-to-end, multi-sta
 
 This boundary is treated as a first-class architectural principle rather than an implementation detail:
 
-- **Entrusted to the LLM:**
-  - Semantic intent classification (language nuances, colloquial expressions, customer frustration).
-  - Reply generation (Twitter tone, empathy, formatting, procedural synthesis).
+- **Entrusted to the LLMs:**
+  - **Semantic Intent Classification:** Handled by `qwen/qwen3.8-27b` (temperature 0.0) to parse colloquial customer language, multi-turn thread context, and implicit user frustration.
+  - **Semantic Problem-Resolution Verification:** Handled by `openai/gpt-oss-120b` (temperature 0.0) to evaluate whether a proposed procedure actually resolves the customer's technical symptom or merely represents an unresolvable bug or procedural brush-off. Crucially, this audit is performed by an **independent, decoupled model family** rather than having the drafter grade its own candidate.
+  - **Reply Generation:** Handled by `qwen/qwen3.8-27b` (temperature 0.0) to synthesize concise, empathetic Twitter copy strictly grounded in verified evidence.
 - **Enforced Deterministically in Code (Never Delegated to the LLM):**
-  - **Self-Reported Confidence Rejected:** LLM self-reported confidence is known to be poorly calibrated, sycophantic, and prone to over-confidence on hallucinations. It is completely rejected as an escalation signal.
-  - **Non-Overridable Layer 1 Hard Gates:** High-stakes domains (unauthorized charges, payment disputes, hacked accounts, legal threats, repeated customer troubleshooting failures, hardware feature gaps) trigger unconditional escalation via deterministic pattern matching. No retrieval similarity score or model output can override a hard gate.
-  - **Calibrated Layer 2 Boundary:** For non-gated cases, escalation is determined by an empirically calibrated similarity threshold ($\tau = 0.73$) derived against golden-set correctness, satisfying `build.md`'s safety hurdle ($\text{FAH} \le 15\%$).
+  - **Self-Reported Confidence Rejected:** Raw LLM self-reported confidence is known to be uncalibrated, sycophantic, and prone to over-confidence on hallucinations. It is strictly rejected as an escalation signal.
+  - **Non-Overridable Layer 1 Hard Gates:** High-stakes domains (unauthorized charges, payment disputes, compromised accounts, legal threats, repeated customer troubleshooting failures, hardware/feature gaps) trigger unconditional escalation via deterministic regex pattern matching. No retrieval similarity score or model output can override a hard gate.
+  - **Decoupled Two-Threshold Control Logic:** The routing decision flow is strictly governed by deterministic Python logic in `src/escalation.py`:
+    1. *Below $\tau_{low} = 0.65$ (Hard Escalate):* Unconditional escalation enforced in code. No resolution checker call is initiated, saving API latency and token budget on obvious edge cases.
+    2. *Moderate Band $\tau_{low} \le s < \tau_{high}$ ($[0.65, 0.73)$, Conditional Recovery):* The agent is permitted to auto-handle *only if* the independent `openai/gpt-oss-120b` checker returns `resolves_problem: true`. If the checker returns `false`, times out, or fails to parse, deterministic code defaults to safe escalation.
+    3. *High Confidence Band $s \ge \tau_{high} = 0.73$ (Pass with Hard Veto):* Retrieval similarity is sufficiently high for auto-handling, but code enforces that if the independent checker returns `resolves_problem: false` (detecting a procedural brush-off or unresolvable bug), code issues an immediate non-overridable `resolution_check_veto` and forces human escalation.
+    *(The historical single-threshold scalar cutoff $\tau=0.73$ is maintained in code via `--no-check` as the Phase 4 baseline-of-record).*
 
 ---
 
@@ -127,14 +144,30 @@ This boundary is treated as a first-class architectural principle rather than an
   "predicted_intent": "playback_issue",
   "drafted_reply": "We hear you! To fix the shuffle issue, please log out, fully close the app, restart your device, and log back in. This often resolves playback glitches. Let us know if it helps!",
   "decision": "auto_handle",
-  "decision_reason": "High grounding confidence (similarity 0.766 >= threshold 0.73); standard troubleshooting applicable",
+  "decision_reason": "Moderate grounding confidence (similarity 0.682 >= 0.65) verified by resolution check: Candidate procedure provides standard cache clear protocol which addresses playlist loading glitches",
   "grounding_source": "curated_sop",
   "evidence_used": ["Curated SOP [PB_01_BASIC_REFRESH]: Quick Session & Cache Refresh Protocol"],
   "gate_triggered": null,
-  "calibrated_confidence": 0.766,
+  "calibrated_confidence": 0.682,
   "difficulty_tier": "easy",
   "gold_decision": "auto_handle",
   "gold_intent": "playback_issue"
+}
+```
+*Note on Schema Extensions:*
+- When the independent resolution checker triggers an override at $s \ge 0.73$, `gate_triggered` is populated with `"resolution_check_veto"` and `decision_reason` records the checker's diagnostic rationale (`"Procedural brush-off veto (resolution check failed): ..."`).
+- When a moderate-similarity case in $[0.65, 0.73)$ is verified, `decision_reason` explicitly records the resolution check confirmation string, preserving full traceability while remaining 100% backward-compatible with downstream evaluation scripts.
+
+### Resolution Check Cache Record (`src/resolution_check_cache.json`)
+```json
+{
+  "hash_key_128bit": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The SOP outlines clearing the local cache and logging out/in, which addresses corrupted client playback queues.",
+    "model": "openai/gpt-oss-120b",
+    "timestamp": 1726554600.0
+  }
 }
 ```
 
@@ -156,17 +189,20 @@ This boundary is treated as a first-class architectural principle rather than an
 
 - **Strict Subsample Scope:** Pipeline operates over a 151-row golden set and an 8,310-document visible-resolution index, eliminating the multi-million row TWCS loading bottleneck.
 - **Offline Model Caching:** SentenceTransformers runs with `HF_HUB_OFFLINE=1`, loading cached `all-MiniLM-L6-v2` embeddings in <1 second without network retries.
-- **Smart Result Caching:** Classifier predictions and drafted replies are persisted incrementally to disk (`src/classifier_predictions.csv`, `src/agent_predictions_golden151.csv`), enabling subsequent evaluation sweeps to execute in ~5 seconds.
+- **Smart Result Caching:** Classifier predictions, drafted replies, and resolution checker verdicts are persisted incrementally to disk (`src/classifier_predictions.csv`, `src/agent_predictions_golden151.csv`, `src/resolution_check_cache.json`), enabling subsequent evaluation sweeps to execute in ~2 seconds.
 - **Deterministic Seeding:** Stratified sampling and calibration splits use explicit seeds (`random_state=42`).
 
 ---
 
 ## 6. Testing Strategy
 
-1. **Fast Deterministic Unit Tests (Zero API Calls, <2s runtime):**
-   - Schema validation for golden set and prediction output records.
-   - Non-overridable adversarial safety check: 5 hand-crafted high-stakes prompts (double charge, Russian account hack, lawsuit threat, 3x reinstall crash, iPhone X display) assert unconditional escalation even at $s=0.99$.
-   - Operational threshold lookup logic and gate regex assertion.
-2. **End-to-End Live LLM Tests:**
-   - Evaluates full pipeline over golden set rows via pinned model `qwen/qwen3.8-27b` at temperature 0.0.
-   - Monitors per-intent classification F1, headline escalation accuracy, FAH, and FE rates.
+The test harness is organized into two distinct tiers:
+
+1. **Fast Deterministic & Offline Tier (Zero Network Calls, <2s runtime):**
+   - **Schema Contracts:** Validates structure, nullability, and types across golden set, prediction outputs, and resolution check cache entries.
+   - **Adversarial Safety Invariants:** 5 hand-crafted high-stakes prompts (double billing charge, Russian account takeover, lawsuit threat, 3x reinstall crash, iPhone X display compatibility) assert unconditional human escalation even if similarity is artificially forced to $s=0.99$.
+   - **Resolution Checker Offline Regression:** With persistent caching (`src/resolution_check_cache.json`), resolution check evaluations execute as zero-latency local dict lookups, enabling deterministic regression testing of the two-threshold decision engine (`src/escalation.py`) in CI without live API keys.
+   - **URL Guardrail Unit Verification:** Asserts that reply drafting regex filters fail any drafted response containing hallucinated synthetic links not present in evidence.
+2. **End-to-End Live LLM Tier (Cold-Start Mode B, ~7–8 min staged / ~24 min standalone):**
+   - Evaluates full pipeline over golden set rows via pinned models: `qwen/qwen3.8-27b` (classification and reply drafting) and `openai/gpt-oss-120b` (independent resolution checking and post-hoc audit judge).
+   - Validates live JSON parsing, temperature 0.0 determinism, rate-limit backoff, and ensures live escalation metrics match cached figures within statistical tolerance (measured standalone wall-clock: 1425.4s / 23.8 min).

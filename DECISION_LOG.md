@@ -10,6 +10,7 @@ This document tracks all formal architectural choices, empirical pivots, thresho
 - **Phase 5 (Evaluation Harness, Independent LLM Judge & Validation):** Entries 20–23
 - **Phase 6 (Comprehensive Failure Taxonomy & Dual-Track Reproducibility):** Entry 24
 - **Post-Review Hardening & Vulnerability Remediation:** Entries 25–29
+- **Post-Phase-6 Architecture Improvement (Two-Threshold Engine & Verification):** Entry 30 (see [`REPORT.md` §6.3.1](file:///Users/kavya/Desktop/Groundcheck/REPORT.md#631-post-phase-6-architecture-improvement-two-threshold-calibrated-engine--independent-resolution-checker))
 
 ---
 
@@ -119,7 +120,7 @@ This document tracks all formal architectural choices, empirical pivots, thresho
 
 29. **Classifier generation token budget expansion (`src/classifier.py`)** — Increased `max_tokens` from 80 to 200 in `src/classifier.py`. The original 80-token cap risked mid-generation truncation whenever the LLM produced a detailed routing rationale, which caused invalid JSON decode errors, burned through API retries, and triggered silent fallbacks to the `playback_issue` default. Expanding the budget to 200 tokens provides comfortable headroom for complete 3-field JSON output without impacting inference latency. Crucially, re-running classification across all 132 in-taxonomy golden rows produced predictions 100% identical to the pre-fix run — confirming that the original 82.58% accuracy was never actually degraded by token truncation in the golden set (it was a latent risk rather than an active bug in practice).
 
-30. **Two-threshold decision architecture, independent LLM problem-resolution verification, and honest held-out overfitting analysis (`src/resolution_check.py`, `src/escalation.py`, `src/retrieval.py`, `src/agent.py`)** — Designed, calibrated, and evaluated architectural changes targeting Failure Modes 1 (classification bleed), 2 (colloquial phrasing dead zone), and 3 (irrelevant procedural brush-offs):
+30. **Two-threshold decision architecture, independent LLM problem-resolution verification, and honest held-out overfitting analysis (`src/resolution_check.py`, `src/escalation.py`, `src/retrieval.py`, `src/agent.py`)** — Designed, calibrated, and evaluated architectural changes (see detailed empirical breakdown in [`REPORT.md` §6.3.1](file:///Users/kavya/Desktop/Groundcheck/REPORT.md#631-post-phase-6-architecture-improvement-two-threshold-calibrated-engine--independent-resolution-checker)) targeting Failure Modes 2 (colloquial phrasing dead zone) and 3 (irrelevant procedural brush-offs), while investigating multi-partition retrieval for Failure Mode 1 (classification bleed):
     - *Independent Auditor Model Separation:* Implemented `src/resolution_check.py` using `openai/gpt-oss-120b` (Groq API, temperature 0.0, max_tokens 750) with persistent disk caching (`src/resolution_check_cache.json`). This strictly eliminates the same-model bias risk identified in Entry 20, ensuring the drafter/classifier (`qwen/qwen3.8-27b`) does not verify its own solutions.
     - *Two-Threshold Gate Architecture:*
       - Below $\tau_{low} = 0.65$: Unconditional escalation (preserves latency and LLM token budget).

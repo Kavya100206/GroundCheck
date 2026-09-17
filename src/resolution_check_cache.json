@@ -1,0 +1,1122 @@
+{
+  "13c120d6ed08432f0f8105d8200dee9abfb4a9a987732a3d63f9a3d149c16b77": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for device details and offers to suggest later, providing no actual troubleshooting steps to fix the crash."
+  },
+  "aa95b2e81a391421115cbb40965ed767209e7f474828c7b54fe854eeb005ff76": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "Logging out and back in is a generic step that is unlikely to fix a specific Android crash caused by song sharing, which likely requires a bug fix rather than simple client re-login."
+  },
+  "1eaafb9ab8902b7b426bf4ba435323aa51a0d93cfd1f03a18b9ca75ee2e21d03": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only redirects the user to DM without providing any troubleshooting for the sign\u2011up error, so it does not resolve the issue."
+  },
+  "6f2b0484c4bbd604ee5ff915e57ebd92ae2784509b64463bd3a96f112bed5a16": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only provides a generic sign\u2011up link and does not address whether disabling existing Premium allows taking the promotion."
+  },
+  "b16399a52077c79d19b91a5efa40a417be5b7f2075e756582dc527561ebd055e": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for the email and promises to suggest something later, providing no concrete steps to unlink the Facebook account or delete the information."
+  },
+  "ef02a47701a97c1f1c9158a9be0f500d6ff1d332453ffaa61f05605076cab561": {
+    "resolves_problem": false,
+    "confidence": 0.98,
+    "reason": "The reply is a generic brush\u2011off and does not address the customer's question about response time or subscription cancellation."
+  },
+  "aecae0871aa3fc1f29dd98185d18d5288b92e7d42be2ecdf9c337c851e336ec4": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The reply merely asks about trying a different device without providing concrete troubleshooting steps, so it does not address the playback glitch."
+  },
+  "813446ee4017c3dd8fbbba6786d348b4b2ea8766bfb0f5305fee24f80229cf84": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only acknowledges the request and forwards it to the content team, offering no actionable fix to add the song."
+  },
+  "dad857ed3a777d7b31a43ff53927b27c4440c64f498397e95e3820a5c90bb2b0": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only redirects to a DM and offers no troubleshooting for the missing DLL error, so it does not address the customer's issue."
+  },
+  "45ff5084278ffb2e2837e71a3f15da62799704966fb0b484bb554f25ad039570": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks about network type and provides no troubleshooting steps, so it does not address the playback issue."
+  },
+  "a8a9e727b3a735365703570b0d363e3cd464506ff963972fd8b1658c1ce04168": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for account details without explaining how to add family members or enable separate playback, so it does not solve the user's issue."
+  },
+  "966c3942326b286024271b41908538009ecfac90619677350368c5b20acb25cb": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only explains how to share playlists, not how to set up individual family member accounts or enable simultaneous separate playback, so it doesn't address the customer's issue."
+  },
+  "1524967efbbb6e35fe432127509fc02ee9595f021c0247168a6f2a921a6032fc": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only requests device and version details without providing any actual troubleshooting steps, so it does not address the crashing and playback issues."
+  },
+  "b177c10a7b8fa2b0a2076bdf4f8d5efc6fc5cc30cd0139d8c0e6ccb4c2f3fcd8": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The reply suggests standard client-side troubleshooting (logout, restart, relogin) that can plausibly fix app crashes and playback interruptions."
+  },
+  "702a69dd9c5ffd4362c5828c557d6152906b71da6bb3d39c9dbe95ba40b2a8d8": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for device details and offers no troubleshooting steps, so it does not address the playback issue."
+  },
+  "ee628ced574b8eb8bd02a05da03e598f7c8d45fd82fa59bbd6ed2d2608c8a23d": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply merely requests device details and offers to suggest later, providing no concrete troubleshooting steps to fix the web player crashes."
+  },
+  "0f34cef043b64ac093f842afbb1ddb64d71be154d2f58ea62e6394f91dc095f4": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for more details and does not provide any troubleshooting steps to fix the web player crashes."
+  },
+  "35737473268d25d0e5ed6c316036dfb808bec52e21cc72ef54ed89215a851012": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The reply does not provide the account creation date and only redirects to a DM, offering no concrete answer to the customer's request."
+  },
+  "802c315c96d4dec8fa7cd86120397c3a7838278ea1d0bf0f9724a108fa45bf93": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for device details and does not provide any actual troubleshooting steps to fix the skipping issue."
+  },
+  "c418b5587f76ff99ca8b6cc66f42afe42a76a020ee8dea8c89b3d37b171c0dba": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only requests device details and does not provide any concrete troubleshooting steps to fix the random skipping issue."
+  },
+  "fd03bbfc81ca427c47ed4ba1ab97d4f14403cd76267d30d35f397f3458ad104b": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The reply requests the account identifiers needed to locate the premium account and reset the password, directly addressing the password\u2011retrieval issue."
+  },
+  "8009e81be710565c4332ab103b75a43dcde01bdea2a110b37a1caa775218d502": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only redirects to a DM and provides no steps to recover the forgotten password, so it does not solve the customer's issue."
+  },
+  "39a2e4db82fc830e172d47b40c1a929c2449fef883caedd4be2dfe9140d0b7e8": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply is a generic acknowledgment and does not address the customer's playback issue with any troubleshooting steps."
+  },
+  "3a21d9099037cf03c91c79cbc9ded18af226bddc776e67a7aef9ef551c61cdaa": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply suggests reinstalling, which doesn't address the user's concern that app updates delete offline files."
+  },
+  "aca1f830f35af999094a4d283b7fd8cc1ea2bd9731e7dd85a46e091907db38f7": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply merely asks for clarification and does not provide any solution to the concern that app updates delete offline files."
+  },
+  "f2a435abdcfa25be8163364d52b21af2b5c41d7703c5844e748cbbd072cd5b4f": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply merely requests OS and app version information and offers no concrete troubleshooting, so it does not address the music pausing issue."
+  },
+  "aae276abbe25e6c863592cee88f5cd4a44258a89944b141e05b9846e940477e3": {
+    "resolves_problem": true,
+    "confidence": 0.8,
+    "reason": "The suggested logout, device restart, and re-login target a common iOS background audio glitch that can cause Spotify to pause when switching apps."
+  },
+  "5be76049d26ebfeeaf50f2d3fecb3cec9fb73b09e1819d29d5bc6edefed1b33a": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply about a 10k limit in Your Music does not address the customer's confusion about the family premium upgrade."
+  },
+  "e8ea1514f677b18926691fefbb9c2da69ec417fa73bd1797ed2170bc4a2d9413": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only redirects to DM and does not address the Hulu subscription issue, so it fails to resolve the customer's problem."
+  },
+  "deed45b2a395edc9cc41ac33694c0a7ea37514cb30472817abecb6718274f1b4": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests deleting the tweet and DMing, which does not help the user locate or recover the unknown email for their account."
+  },
+  "31f5a0cb8248f14a4dc7de0c2c7c498bb7def25e6fd5ef20d4de46bf968d1d49": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only mentions algorithm improvements and asks for feedback, offering no actionable fix for the shuffle behavior."
+  },
+  "ca5de5a5de1623f3b51e51105d44fa6a634d7a87d85daa81605899c3804f0ee5": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply suggests restarting the device, which does not address the Wi\u2011Fi\u2011specific login failure the customer is experiencing."
+  },
+  "cfd52ed1ada0260058768f9ca036a95fb4f0b246cf50b66047eb4d3b2ccbec94": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The issue spans multiple devices and OS versions, indicating a likely account or backend problem that a clean reinstall on a single device cannot fix."
+  },
+  "92a16bcca19c4f384b47a3f710452fcabd2fd5a0d74c8bb069db1e95846db9e3": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The issue appears to be persistent across devices and OS versions, indicating a backend or account problem that logout/reboot won't fix."
+  },
+  "c55d92ffda32e6c2eae71814cfbb8db7ae0386b39e658f044c77270b3dcafabe": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The reply only asks for account details via DM and does not provide any concrete troubleshooting steps to fix the login issue."
+  },
+  "cd5586b312f4ba43067f922116ac4e09fc99b375ca80faf16c7a3946516fa384": {
+    "resolves_problem": false,
+    "confidence": 0.95,
+    "reason": "The reply only asks for account details without providing any concrete troubleshooting steps for the Facebook login issue."
+  },
+  "fef98a5835fa5c13e11feed92589e04970c8f42f6dd632f09c54584613b0cd13": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for a song link and does not address fixing the incorrect track name, so it does not resolve the issue."
+  },
+  "bec390f0d6a74ca39e0c6e015233aaff2a0f05617ce97471f73d73c288e4b798": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only acknowledges the issue without taking any corrective action, so it does not fix the wrong name problem."
+  },
+  "486ddc87dcc36df5cd8c658e72163752519d9b1f1ce1f3c33358e637496c069d": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply states the feature doesn't exist and only suggests supporting the idea, offering no actionable solution to block the song."
+  },
+  "b4acc21ea8101702c39a2528f3fafda3d220b70b3f77aee8e9c409a78b83db3b": {
+    "resolves_problem": false,
+    "confidence": 0.9,
+    "reason": "The reply suggests a generic OS logout/restart, which does not address the specific Firefox 56 compatibility issue on Ubuntu."
+  },
+  "6615f06d13d2a11db2a083ed9b0623824d98096d1603662d8ed670c3c40eca2d": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The reply merely requests a DM for account details and offers no concrete troubleshooting steps to fix the family invitation issue."
+  },
+  "a2d172d24a015541e3deac39e125d5fcfb3e5d71f2705cb856b5b7d7f4c3ccb2": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only redirects to DM and offers no concrete solution to the regional account block, so it does not resolve the issue."
+  },
+  "2b1cd8b494d470a37a502a162ca055d9b8df29d1cf76eb2b78c45c8f43979e96": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only requests device details and offers generic troubleshooting, which does not address the specific last.fm integration failure the user is experiencing."
+  },
+  "3f31b3218263bf7728700098570d607e06385d1234f660204d8126fa0c09009b": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only requests more information and offers no concrete troubleshooting steps, so it does not address the playback issue."
+  },
+  "3f17700b8b7a38e2cefb670fed72d8d6daf875483f709f98253542b7c9f5b077": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply repeats a step the user already tried and does not address the crackling/popping audio issue."
+  },
+  "1ab75a6d036b2a2ca102c73e850563491c4fe6666c634046bbe779fc5f2ec1c8": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only acknowledges the issue and promises escalation without providing any actionable troubleshooting, so it does not resolve the artist playback problem."
+  },
+  "8b6306d0ea7144e3fe3cff647c194266510c5b1b5227253f83d50db37026f11d": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only redirects to DM and does not address the account email conflict or provide a solution."
+  },
+  "667aa737fe395dd10df57dddacebe005f8e4d4eb849a90863dab601dd919fcd1": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply asks about network connection, which is unrelated to the song's availability issue in playlists."
+  },
+  "91f194615be8ed001a2c7e5108e9eba826bbfe9e3b4fbd18950de9b0b871d3df": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for device details and offers to suggest later, providing no actual troubleshooting steps to fix the playback stopping issue."
+  },
+  "e9080c48139e7e4f45e37d431f55ba243ce25365c884c9a196c7457a9baf6def": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only acknowledges the issue and promises escalation, providing no actionable troubleshooting for the streaming stop problem."
+  },
+  "a8bc364966a79746e405d9dc25a203ef6d5d354fbd236b17d5ecc36ea77ebb8f": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only redirects the user to a DM and does not provide any solution to the broken cancellation link."
+  },
+  "8ae09b465cc1202b6715b809ce7a6dc8517909d0b62774d8fe775e17657af311": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only tells the user to contact support, offering no concrete security steps, so it does not actually resolve the unauthorized access issue."
+  },
+  "603b3422d8d3f66180df21ee4be56b61db0230561c85340523fc284814b319c2": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only asks for the iPhone model and provides no troubleshooting steps, so it does not address the skipping or missing app issues."
+  },
+  "5e5f4e8679bcacffbd6b8d500dfd6cceae1775fbaf5a3b5ad6e2d5ea22a7baa1": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for device details and offers to suggest later, providing no actual troubleshooting steps for the Bluetooth skip or missing app icon issue."
+  },
+  "e3e0b2085877838d034c5d31ff6b8e435f37820428e86cca283f0400c9acb447": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for more information and does not provide any actionable troubleshooting steps to fix the PS4 not appearing as a device."
+  },
+  "b7556f0b1eb207a833c25785919d016c325389529cbc18f73230b0335b99ab10": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply merely redirects to a DM and does not address the customer's request to cancel Spotify or the ticket purchase issue."
+  },
+  "1127eb690f704e5347ca7158877022aeb385454960acf8ed90fc038b0c8c9895": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply does not address the webplayer playback issue and offers no troubleshooting steps."
+  },
+  "c56b03db5d666b8db18a56024e4850c1632e3e37b7e4c347afcca757b362312b": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for more information and offers no concrete troubleshooting steps, so it does not address the webplayer playback issue."
+  },
+  "795e85a7d3fc62df45788db2846d452c65618d648c7f1ce03ad05af84996e264": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only acknowledges the issue and says developers are looking into it, offering no concrete troubleshooting steps for the blank login page on Chromebook."
+  },
+  "28d5e12e32bae2dd173662f8656bbfb8d1e2a81d38d05738853a5fb28932bb91": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only acknowledges licensing/content availability and does not provide a client-side fix for the missing N-Dubz songs."
+  },
+  "dfb54cdc947e960fb411a7a8c4896598119383aeeaf3d0874972fd7da5ac4d2e": {
+    "resolves_problem": false,
+    "confidence": 0.85,
+    "reason": "The reply only points to a generic contact form and does not directly address or resolve the request to revert the email change."
+  },
+  "ec6091cb9fa64c7b7b897a3f79e6df3c2755607deec265adede0b9096960d979": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply asks about a student discount and requests account info, which does not address the customer's request for a military discount."
+  },
+  "f24670927ba3877aa62942abed1163cea4a2d4c11303acc9571f8f320cd9e9d7": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The reply only states that no military discount exists, which does not fix the customer's request for a discount and offers no actionable solution."
+  },
+  "2bde493dd33083895acc1fd45aa569395ca2ae252cc630629c2b83e7ee90ac54": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for more details and offers no concrete troubleshooting steps, so it does not address restoring the lockscreen controls."
+  },
+  "cbc78f02fe7c182da5be1445ac4a740908a31f61879edb438513f3d5135f7566": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested iOS edit steps are unrelated to the desktop playback availability issue, so they do not address the customer's problem."
+  },
+  "7932c27f369b62d2a9006b30b0859e8ff772d11210b8bf05d95062d178df6ad7": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for a screenshot and offers no concrete solution to the licensing/availability discrepancy between mobile and desktop, making it a generic brush\u2011off."
+  },
+  "8a39758acc0e01049035600c99678975a12a4a9f0d4c12a3d7da63d3b1433e09": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The reply directs the user to the specific setting that controls Spotify's auto\u2011start on Windows, directly addressing the request to stop it from launching after updates."
+  },
+  "40baa111f60cb4084611ca8c419f0afeae01ee3f52c3a4a2b4acd98181ed2fc3": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply only acknowledges the request and passes feedback, which does not address the customer's question about Android Wear improvements."
+  },
+  "21b3b30fd03a3d754be30e65ef795a323442674a0f27040b27af54c326c33bce": {
+    "resolves_problem": false,
+    "confidence": 0.97,
+    "reason": "The reply only explains the auto-generated ID and does not provide a way to change or set a custom username, so it doesn't solve the user's issue."
+  },
+  "478958da7291732fb4aa79723a4efca6f08c2911fa40e9f5111fc1615f018b60": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only asks for clarification and provides no troubleshooting steps, so it does not address the freezing issue."
+  },
+  "741cf9db9a9f57ad2d20b6bc4c7861d872cbe8b910829a3a5d116b3d11c42e2c": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only acknowledges the issue and says it will be reported, offering no troubleshooting or fix for the broken album."
+  },
+  "fe0d2800475126fb8da51787aa37f96ab73f47ba76bd7a38b6af9f663cad96e5": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply states the request is not possible and offers no actionable troubleshooting, thus it does not address the customer's issue."
+  },
+  "6f2a0eea68b902c7a5affdc463b08ffebe6648464219f3a989b60b588d79e83b": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply merely asks for a playlist link and does not address the complaint about unwanted recommended songs, so it fails to solve the underlying issue."
+  },
+  "5da65dd82f64b9a8c7d899f46517b9d21a32f0c97cd87b827200cc67713c93d0": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply merely restates the feature and does not address the customer's complaint about unwanted recommended songs, offering no actionable solution."
+  },
+  "e57c2cf245eec78be85cc0fab50ce383bd831fe369f39cec7a613259ea2504bb": {
+    "resolves_problem": true,
+    "confidence": 0.87,
+    "reason": "The steps address a client-side playback glitch by resetting the session and device, which commonly fixes automatic track skipping."
+  },
+  "95a2530a327cbb87a1e49f8dc877ebabbac22f459c33e875f6e34eab8468d5f6": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "The issue is with Spotify's shuffle algorithm, a backend behavior that cannot be fixed by merely logging out, restarting the app, or the device."
+  },
+  "7b4d411a678d5b9560056d1ef57ffb6949588c3ff79623414e21b196d8d1f04a": {
+    "resolves_problem": false,
+    "confidence": 0.85,
+    "reason": "The suggested clean reinstall is a generic client fix and does not address a likely app\u2011side bug causing crashes during song sharing on Android."
+  },
+  "494cc57dbd2ff7336adcc551b0446dd1bdfaf4092ac7e3d86786ca6ce4cdc105": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The reply offers generic session refresh steps, which don't specifically address the Android song\u2011sharing crash and doesn't confirm a known issue."
+  },
+  "b68adc92f97e2633bc23916e5cfad6961548c44301c44905636729f320e97385": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The customer is unable to sign up and receives an \"oops\" error, but the reply only addresses password reset, which does not address the sign\u2011up failure."
+  },
+  "218266e4648c527c3ebd7308231b4ebab2a0b5a4127bff274bec3ee6e7f49489": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about family/duo plan invitations is unrelated to the user's question about disabling premium to use a promotion."
+  },
+  "db49ee6363680608960137e85f5af1e2a128f4df1e3ea5c86122cdb9685f818b": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested password reset does not address the need to unlink or delete a Facebook-linked account, so it fails to solve the customer's issue."
+  },
+  "3548770439e555a7282c3f7dac3a446c068251e932a912aa98aeff0cb1a52608": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about family plan invitation steps is unrelated to the customer's query about response time and subscription cancellation."
+  },
+  "a0295e31c1e298dd0f8657a90044ef9fec2ee6d25f00099b39e6968e61c76719": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The steps address a client-side playback glitch by resetting the session and device, which are standard fixes for short\u2011duration silent playback."
+  },
+  "918479b43e2d144f777b9f5745784ef2683f9b09e97f51a96ea29cfdacd5cb4d": {
+    "resolves_problem": false,
+    "confidence": 0.98,
+    "reason": "The user is requesting a missing song to be re-added, a catalog/licensing issue, which cannot be fixed by logging out and restarting the app."
+  },
+  "63aed357b6aa9dcc3cd3c27b751e66b6a4f01023e92ef2713078f7c9e39e617d": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "The suggested offline installer and Visual C++ redistributable update directly address the missing 'api-ms-win-core-processthreads' DLL, a client\u2011side runtime issue."
+  },
+  "f3a64db69b6129d12c90e06336f53bf9487fce4206abac723c790346e0c7ff21": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, restarting the app/device, and logging back in is a standard fix for client-side playback glitches like songs stopping after a skip."
+  },
+  "8bc07da3236d9f6a0fbf25203f286565d15b71f251bceff1ff517a473049215d": {
+    "resolves_problem": true,
+    "confidence": 0.93,
+    "reason": "The steps explain how to correctly add family members via invitation and address verification, which is needed for separate playback on different devices."
+  },
+  "a55076ff08583eb8e44b2ff421d9bb099b650b96046b30ebcdaf8f1cc7635ce2": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested password reset steps are unrelated to adding family members or enabling simultaneous separate playback on different devices."
+  },
+  "c9af1ec02349ecc28cd4c25353154f6bfea6121b01b5af713687f11fe0a67903": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "The issue is a client\u2011side app crash and playback stoppage, which are commonly fixed by a clean reinstall and cache clear."
+  },
+  "1830ed401c017619f2e5401b3e84a875f82e7f9651131529e6c20754f7b4660b": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The steps target common client-side crashes and playback interruptions, which are plausible fixes for the described app instability."
+  },
+  "64f4883aadf76692f02740ccd258777da35eacd31984d6074b201d0b1c7b7141": {
+    "resolves_problem": false,
+    "confidence": 0.88,
+    "reason": "The reply focuses on regional availability and greyed-out tracks, not on local playback issues like offline mode, cache corruption, or token refresh that cause all songs to be unplayable on the laptop."
+  },
+  "50d0fcda3cb0c218308ed2bcf59333a39c494556ccd2c5bfe089aba0d625350c": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The steps target the desktop/mobile app, while the issue is with the Spotify web player crashing in a browser, making the advice irrelevant."
+  },
+  "3333ec2f55ad9a4dfc9ce676f67d12d35a8d288412d194bd3120ab2223ce3be7": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply explains password reset steps, which do not provide the account creation date the user asked for."
+  },
+  "487420df54b13b6a26bae6233537c03a5f5724675a89ee2d256b1807c4914131": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, fully restarting the app and device addresses common client\u2011side playback glitches that cause songs to skip on a Samsung Galaxy."
+  },
+  "3bc65447b82917f97d262115fa5b7ba08363211bf21ae9a2b20aaadb49da4112": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "Logging out, fully restarting the app/device, and re\u2011logging in are standard fixes for client\u2011side playback glitches that cause random song skipping."
+  },
+  "4f9d127bfdd465a123287cc2945496baffa83c6c3bcbd3afaef559af8034b59a": {
+    "resolves_problem": true,
+    "confidence": 0.96,
+    "reason": "The reply provides the correct password reset steps needed to recover access to the premium account, directly addressing the customer's issue."
+  },
+  "38cc0a1773ff9ba11d7400ab820f0290c0c3a8b7d68b29157524472463eb0ae3": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested family plan invitation steps are unrelated to the customer's password recovery and account login issue."
+  },
+  "53e74d269a582a73cd66dcd53601adf91c5b3acd0eb5fed137d1cab49bc5ba80": {
+    "resolves_problem": true,
+    "confidence": 0.8,
+    "reason": "The suggested logout, app restart, and device reboot are standard fixes for client-side playback glitches like the one described."
+  },
+  "308ab80b7b4389cb11f2defc08615a19151559b4700597334d0b2c993d5702cc": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply suggests a full reinstall, which would also delete offline files and does not address the customer's concern about updates removing offline content."
+  },
+  "a5e0273f7452e0af9ee5fec018c04b2fd8e0589264da732c863c6d88f456b9ca": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about Family & Duo plan invitations is unrelated to the user's concern about app updates deleting offline files."
+  },
+  "3f367aba57e4674052413be60f009de81e3e0c8f104e952958988d258db4e22f": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested console/TV power cycle and Spotify Connect steps are unrelated to the iOS background playback issue described."
+  },
+  "20a1a131a8596423342047faf6190cc11a38503d19847d43569eb31cca63dee9": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "The steps are generic session resets, but the issue stems from an iOS update causing background audio interruptions, which client-side logout/restart is unlikely to fix."
+  },
+  "0ad1d68cd05ac129e744df4086cead4b3d33b12cc8a0055aa8eb8b28d7abdcb4": {
+    "resolves_problem": false,
+    "confidence": 0.85,
+    "reason": "The reply addresses invitation address matching, but the customer's vague complaint about the family plan being confusing is not specifically about that issue."
+  },
+  "f4170cb7220ee3c9fc22c3429701a6c6ebcce9ad8d9e5839be40b9b2caf6b23a": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply addresses Spotify family plan invites, which is unrelated to the customer's request for help with a Hulu subscription."
+  },
+  "9c12e9cc0163d94a0e2ba254fa9d8e4a21d0a86cc654b33ee77a101d540049ff": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested password reset steps require knowing the registered email, which the user explicitly does not have, so the reply does not address the core issue."
+  },
+  "107b8329382e790a12261e03ba24cbbab7fd0be628c4a25a0ebf13210bbd0693": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The complaint is about Spotify's shuffle algorithm playing an album sequentially, which is a backend behavior not fixed by logging out or restarting the device."
+  },
+  "dc93082906b186f50cfff9f3626aabe6657dadf9c1f2d259ef0a46388bdc7638": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested password reset addresses authentication, not the Wi\u2011Fi\u2011specific login blockage the user is experiencing."
+  },
+  "aeadb9662f821181863030b02db20cad5d47d2d81e4b59142026d89024e6997d": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "A password reset is a standard, plausible fix for most login problems and directly addresses the reported issue."
+  },
+  "95489c6d47acbfc71017ffc587cccb05beefa72def456de58404c6edfaec380f": {
+    "resolves_problem": false,
+    "confidence": 0.85,
+    "reason": "The reply suggests a password reset, which doesn't address the core issue of the Facebook account not being linked to the Spotify account."
+  },
+  "a2e09ec65ae70646b3ab812737a96c926404e652407670878aaa79d91c15920f": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The issue is incorrect metadata (wrong name) which is a backend catalog problem, not fixed by logging out or restarting the app."
+  },
+  "97b31787e5a6345f7bc9d75915f1b3c911ea2df99f4b757353499973c1972f7f": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the user's request to correct an incorrect display name."
+  },
+  "8e9c3ede4da4aa753d020ae9a7a521f3efe0d729521bdcd220124037a892ff99": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested logout and device restart do not address the user's request for a song/artist blocking feature, making the reply irrelevant."
+  },
+  "ce91f030cebb84c8e46d706044142643781ae8c5d0a6c63602aea064be07b757": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply discusses console/TV power cycling and Spotify Connect, which is unrelated to the user's browser compatibility issue on Firefox 56."
+  },
+  "0a2732cc2f7cbedbd54d6ed884a0b0bdc6812ca22e9e9ad55c1f3481e0754ec1": {
+    "resolves_problem": true,
+    "confidence": 0.96,
+    "reason": "The reply gives the exact required steps (new invite link, incognito use, matching residential address) to address the common cause of family\u2011plan invitation failures."
+  },
+  "3c5ca1ce664b6390868d65f68c092062aeea678e8afcdf6d9a1e35a0b40efb2c": {
+    "resolves_problem": true,
+    "confidence": 0.96,
+    "reason": "The reply explains the 14\u2011day free\u2011tier restriction and gives the correct steps (update country setting or upgrade) to restore access, directly addressing the overseas block."
+  },
+  "f299dbe03663668ad91b837b015a140a3b3b2a2c778858697ab02bd9b19003be": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the last.fm authorization or player integration issue the user is experiencing."
+  },
+  "f802129650288e6b2bf94276abf2734af590a21a76526f6f18d78845b8dac9ed": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The problem affects both web and iOS playback, indicating a likely service-wide outage rather than a client-side glitch, so generic logout/restart steps won't fix it."
+  },
+  "694636c0c22ec8155f11560264cbeef6559b59b31fe886c3102069917fb2d7da": {
+    "resolves_problem": false,
+    "confidence": 0.9,
+    "reason": "The problem occurs on multiple devices, indicating a backend/licensing issue that a simple logout and device restart cannot fix."
+  },
+  "12b8cfffce4e00ead8ff339b27effff92af00b7f2723ade121f5456584d76710": {
+    "resolves_problem": false,
+    "confidence": 0.85,
+    "reason": "The reply only suggests a password reset, which doesn't address the core issue of another party having registered the customer's email and likely requires account recovery assistance from support."
+  },
+  "8a960e4dec6267dc6d670f7d4e6fc25a1343a523bc7286e7e95d19a4d85cfcd0": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The problem is song availability in playlists, likely due to licensing, which a session refresh and device restart cannot fix."
+  },
+  "8f3998e8adc77c9df15e52b07430142e61df02482464a5c9b2373f67ef12dc10": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The steps only refresh the session, but the issue stems from account/device limitations in the car, which generic logout/restart won't fix."
+  },
+  "afe38e57595d9645c305ee22c923dba30bad4a1af3d47ff4bbf06f9e4885fdc1": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The playback stops because the family plan address verification blocks streaming on a device not matching the plan manager's address; re\u2011inviting with the correct residential address can resolve the issue."
+  },
+  "c988079c3e07c58eee6c7d8ee27d2c10936919b6289f7259656cf6fd0ccefef8": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply addresses family plan invitations, which is unrelated to the customer's issue of canceling a subscription via a non\u2011functioning link."
+  },
+  "3c7a7fc77f3b89c307128925b1cb875cc9fa65d1537496f5b9326eef6ae22e9a": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Resetting the password is a relevant and standard step to secure a compromised account and stop unauthorized access."
+  },
+  "066e979cb6ddf2ea7e521eb69fa51b404d0d484ba9bdb7cd0c4a171555bae71e": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "Re\u2011pairing Bluetooth may help skip controls but does not address the missing Spotify app/home\u2011screen issue, so it does not fully resolve the customer's problem."
+  },
+  "03c6f795effc383d51d032165115700205972e24a65644fea41a2d84ac1c4e0a": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The suggested logout and device restart do not address the iOS\u2011specific Bluetooth skip issue or the missing app icon, which are likely OS\u2011level problems not fixed by simple session refresh."
+  },
+  "d634b785f454d7173bf93ed454f58096699f8df0f5df7730afbcb1b269d9c9d8": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about family plan invitation steps is unrelated to the customer's complaint about ticket purchase and cancellation request."
+  },
+  "c5740c438a6751ccf68058d43704e457f8557823ddd747c5aa33e9514623d634": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, restarting the device, and re\u2011logging in clears session and cache issues that often cause the webplayer to stop or fail to start playback."
+  },
+  "bfa920d6acf7793ac9d7fce62a106fa545e3456b47f24a581e0070975842c0b3": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested password reset steps do not address a blank login page on a Chromebook, which is a client-side rendering issue."
+  },
+  "d6c221cb1d23cbd9558e96f7ba38302b4470f877093f03fc1bdff59d0e62ad73": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The user is asking for missing N\u2011Dubz tracks, a catalog/licensing issue that cannot be fixed by logging out or restarting the device."
+  },
+  "cbc2870fc86baa049b2aeaa9d534aab18cc9d649643bfdd4cd806157ba8fba85": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply suggests a password reset, which does not address the customer's request to revert an email address change on their account."
+  },
+  "610d79ca19043bfd982fd816a7f97ed20610e5a62241258e84650c22ca6ac3df": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The customer is asking about a missing military discount, which cannot be fixed by logging out or restarting the device."
+  },
+  "ef4eb4381f040f4f0b59cee05377ab675c598af26b8f40a54d3af1ec46cdaa10": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply explains how to obtain a student discount, which does not address the customer's request for a military discount."
+  },
+  "2c7193721df76267719932362ec04c1ca6dc931fc1b1b0d413ef6584f87c755c": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested console/TV power cycle and Spotify Connect steps are unrelated to missing iOS lockscreen controls."
+  },
+  "a0293d38e1021d366a1a94f8189f91e025371777220b96a5661926792720be94": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested console/TV power cycle and Connect steps do not address why tracks are unavailable on the desktop app, which is typically due to licensing or platform restrictions."
+  },
+  "fc60317576672b342a1b0d2a9ac8486b71d12b22c7cbd5129d9169f0275a554e": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The discrepancy is due to platform licensing restrictions, which a logout/restart cannot fix."
+  },
+  "601bd84c19a589907b906246835e14304dd96f2e291cd521591fe1a031333fca": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested console/TV power cycle steps are unrelated to disabling Spotify's auto-start on Windows startup."
+  },
+  "50e3bbc870157a87968a1be7771d548e6437d118df94a0e1bbaa92b99170326a": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply discusses console/TV power cycling and Spotify Connect, which is unrelated to the customer's question about Android Wear improvements."
+  },
+  "d06e4a49fca9273f62fe928c8a4a0644d6aaa066d754c922ed2e49ba06aa0898": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply suggests a password reset, which does not address the user's concern about their numeric username derived from Facebook login."
+  },
+  "dbd4273fb814d3978d618dd55f70a658bd9d3d19d8fed83586223136f9c78ff3": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "Logging out, fully closing the app, and restarting the device are standard client\u2011side steps that can clear corrupted sessions and resolve playback freezing issues."
+  },
+  "b74219930004c0b34448fdc7547eaae9d7a0c35548534fa4889d51057801ca8a": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The complaint concerns a broken album (likely a metadata/content issue), which cannot be fixed by logging out and restarting the device."
+  },
+  "da4702fcae1b2cdb1e9770647678b95c3ba47bc88a38b23994264e003214a9a5": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The reply addresses console/TV Spotify Connect issues, but the customer\u2019s problem appears broader (e.g., playback failure even on the web player), making the suggested steps unlikely to fix the underlying issue."
+  },
+  "21c9dac3af88f4f4acc19251a3b4be60001b5aad441e731dd408147ade6fcdf3": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about family plan invites is unrelated to the customer's complaint about unwanted recommended songs in playlists."
+  },
+  "43917559062e3d3cdbe458d2a2e961a24ebbebb3b0a2b00e29e82f1e15bcd476": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested logout and device restart address client glitches, but the complaint is about unwanted recommendation songs, which cannot be fixed by a session refresh."
+  },
+  "d30889133ddcdf84f636c9055f30b278b76c897bfd2a0698fb4a529bdeda8021": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "A clean reinstall clears corrupted app data and cache that can cause the sharing feature to crash on the device."
+  },
+  "6aef6330e24334cc58714d83ef3b9b0adad12a03f52ef403a7fa93021b393360": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested console/TV power cycle and Connect pairing steps are unrelated to the mobile app sharing crash on a Pixel device."
+  },
+  "2100623c7e5eb1c2d2eb2088caeb9f16ec0e3fc802688d4e90c48b53aed7b163": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The steps only explain regional rights and refresh tokens, but cannot make unavailable tracks playable if they have been pulled from the UK."
+  },
+  "3c6caf89ccb8b4a780478f79a7c189431d8bf731c3cd23d29c9b9a87aa891992": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the artist verification issue the customer is experiencing."
+  },
+  "b1d0dca293565a7847d38fa9c38de934e70bd1aa2e4d416b8846f3d85ceabc38": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "A full clean reinstall with cache/data clearing can fix app crashes after an update, addressing the share-button force close the user experiences."
+  },
+  "84b77a2b7a9833b8223e6bf11c6ee03486201da8a1261f32a88c2a41717f8107": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested console/TV power cycle and Connect steps are unrelated to the Android editing limitation the customer is complaining about."
+  },
+  "c98f6fc193704b14e1d05404ee69ddb0d966b65604e8cd9fc48a94f0c21b44db": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The user is asking about when a specific track will be available to stream, which is a content licensing/backend issue, not a client-side glitch that a logout/restart can fix."
+  },
+  "91e7c128f66087a35045c606a3f61be9dd12d30c1d5d7a0b3e76d1c614188720": {
+    "resolves_problem": false,
+    "confidence": 0.9,
+    "reason": "The issue is duplicate track listings, a backend metadata problem, which a simple logout and device restart is unlikely to fix."
+  },
+  "728c520c5b30c9b71f28d12cf47bcfac473d0a338d94fad1dbac099ea57fd859": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The issue is algorithmic recommendation behavior, which cannot be fixed by opening an incognito window or changing browsers."
+  },
+  "995d68b3fff52acbaacdf249275259c84086ad31a7db9198213ebb376f68084d": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The issue is about unexpected songs in the feed, which is an algorithmic recommendation problem, not a client-side glitch that a logout/restart can fix."
+  },
+  "f3f2134963c6a3e4ca8efc079c47c967cc6c6f8d50c523ff75d59974886e2f5d": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "The suggested logout, app restart, and device reboot target a client-side playback glitch causing a single song to repeat silently."
+  },
+  "7c9ca307028a5ff9db2c27ef49a09ab3f28e7b2d458437dabe6dac6c6a805f4e": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The reply suggests a standard email-based password reset, but the user\u2019s email is inactive, so the steps won\u2019t address their inability to receive a reset link."
+  },
+  "9c9fd64ff22dbf752a7de31dfb334e2e37a43ab7074154c719ea5fdee759a9da": {
+    "resolves_problem": true,
+    "confidence": 0.7,
+    "reason": "A clean reinstall can clear corrupted cache and fix client\u2011side freezes that cause queue glitches, making it a plausible fix for the described symptom."
+  },
+  "35f8a9ef278c777042fff5c71550e9f36b7a6d80ee7e42fdc65ee7840835fcf9": {
+    "resolves_problem": true,
+    "confidence": 0.73,
+    "reason": "A session refresh and device restart can clear corrupted local queue data that causes freezes, making it a plausible fix for this client\u2011side glitch."
+  },
+  "0e0517c0a8a817b6ef1f89e8e392cf45c75b7beca330b6ac547ab7b26ae18c2c": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The customer suspects an account issue but does not indicate a password problem; a generic password reset is unlikely to address the underlying concern."
+  },
+  "00952e613c32c089b0a8aaf71a0f8923085f52eaa76529d62bfc6bf2744abad3": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply explains how to send a family/duo plan invite, which does not address the user's question about promotion eligibility for a long\u2011time premium subscriber."
+  },
+  "a218b1cf2f28e838ceeff45534f38837f3f9b58e0156397a9c1412c294fb4175": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, fully closing the app, and restarting the device clears session and local glitches that commonly prevent playlist playback on the iPhone app."
+  },
+  "362f67fbddfc55bfa434970305520a60d7816f9eb4eb212d28cf9da9b592c359": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, restarting the app/device, and logging back in can clear session or cache issues that cause a track to skip, making it a plausible fix for this playback glitch."
+  },
+  "aae589a8c455533fc859a90957c468ceeb9ebb2ac4294b543602106af70bc2ff": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The suggested console/TV power cycle and Spotify Connect steps target a different device type and do not address the macOS High Sierra playback button issue."
+  },
+  "cf874943361ce3dc02e373bdd2d4c5cac6a9cdd96f975f4209e4814ba4550f4b": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "Logging out, fully restarting the app/device, and logging back in are standard fixes for unresponsive playback controls on the client side."
+  },
+  "49994eb021255b0621c0c1a5c42a0e2843b6a03dbcb5593c68ab0dacc2b4dcdf": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply discusses console/TV power cycling and Spotify Connect, which is unrelated to the user's Moto X Android phone and does not address any described issue."
+  },
+  "d82ab322129febda14db3c2a3ecbfc69ba3f2c7b4521493140df9fa463a80f0e": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The reply suggests a password reset, but the user\u2019s issue is being stuck at the online connection step, likely a connectivity or account login problem not necessarily solved by resetting the password."
+  },
+  "636bb286bc632e3ff739128ad47e1f4500ac060806799568f72d4702c58e3b4b": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested password reset steps are unrelated to the issue of an under\u2011age account being created without parental permission."
+  },
+  "771880e773944963da3b5e5d9ad40650ca2bb46e8fc8c7773dd2abfd5d6706d1": {
+    "resolves_problem": true,
+    "confidence": 0.75,
+    "reason": "Providing a fresh invite link to open directly (bypassing email) and ensuring address match addresses the failure to receive the email and a common cause of invitation rejection."
+  },
+  "4dc373acf367d412b8a3d8860e47291347f2bfebcde33eef9be3151047dd8885": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply explains family plan invitation steps, which are unrelated to the user's inability to play music after ending their subscription."
+  },
+  "cb98da8dc3031702fb36c2c8d46f6a7705999bab7c0c4935ce9105f00cf765e5": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the user's inability to play music after canceling their subscription."
+  },
+  "7c8550f680429db3ffe9cdf44bf4dfe85ce7acb72ab36c48e4d91094189054b4": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The password reset steps do not fix the customer's issue of links not opening or being unable to view account data and renew the card."
+  },
+  "ad7e066a54269d7070a1e4d03b83d78bc2414156048c921c7a9a2ae7dd699b8c": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested password reset steps are unrelated to adding a family member and do not address the customer's request."
+  },
+  "01c387321ee2729a5a6924fe56e23b0be62b5a1cd8cc32f73acff6d6163d13ad": {
+    "resolves_problem": true,
+    "confidence": 0.8,
+    "reason": "Logging out, restarting the app/device, and logging back in are standard fixes for client\u2011side playback glitches like random stops and fast\u2011forwarding."
+  },
+  "bd5a9e5d6967995541d970fe3a6fbf2163d2d75bd3e3bdc373b0d5b47a280b1a": {
+    "resolves_problem": true,
+    "confidence": 0.75,
+    "reason": "Logging out, restarting the device, and re\u2011logging in can clear a corrupted session that may cause spontaneous playback across devices."
+  },
+  "bc72acf5517ad06dc6675fa148857061e3188a87c8898f65fde59912920b2e6f": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "The suggested console/TV power cycle and Spotify Connect steps target external devices, but the user reports spontaneous playback on iPhone and web apps with no mention of such devices, making the advice irrelevant to the likely cause."
+  },
+  "dc1165d7836704020094cfec54e9cdcf5dba853ebf4d3046246790b247c596f0": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the customer's Wi\u2011Fi/router connectivity issue."
+  },
+  "b8fe0466b6639ef14d6edbad3a8f46c0b44817d73e92e215c7bb5ec2c471e8ec": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "Logging out, restarting the app/device, and re\u2011logging can clear client\u2011side glitches that cause playback to skip, making it a plausible fix for the described symptom."
+  },
+  "1e5a18b9774fe0cbca60835687631ce4987083378dbc71d5ffe9a47f9082307e": {
+    "resolves_problem": true,
+    "confidence": 0.8,
+    "reason": "Power\u2011cycling the console/TV and re\u2011pairing via Spotify Connect can clear the app\u2019s cache and network state, which commonly fixes frozen titles and intermittent playback on Xbox."
+  },
+  "9592740385cc3daea2fa0fc8ec3d9a1c959882e141976b611106fafc30e5a677": {
+    "resolves_problem": true,
+    "confidence": 0.7,
+    "reason": "Logging out, fully closing the app, and restarting the Xbox clears session and cache data, which is a standard fix for UI freezes and intermittent playback failures."
+  },
+  "844db2b4d9f1c259db59312e2abff1d85de9045298ee0ad9e8baa00b15c6661d": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a device restart for playback issues, which does not address the customer's question about how publishers view download statistics."
+  },
+  "c9a6a10849ef24d292a1060fd750a5b8c952b5d82cd06226d7f73713a5bfd74b": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply explains password reset steps, which do not address the user's request to change their username and email."
+  },
+  "306b560702ccb305a1eea00c5542397d0990ea0ed6451afb67c3cb5cafe53405": {
+    "resolves_problem": true,
+    "confidence": 0.9,
+    "reason": "Re-pairing Bluetooth devices is a standard fix for post\u2011update connectivity issues like the car\u2019s Bluetooth not playing Spotify."
+  },
+  "4f59360a40c72c26691bc80f4eeec97e290e9ff514bf6f2b5790617ebd86bc35": {
+    "resolves_problem": false,
+    "confidence": 0.92,
+    "reason": "The problem is a compatibility bug with iOS\u202f11 affecting headphone controls, which cannot be fixed by simple Bluetooth re\u2011pairing."
+  },
+  "bcb5710a0866f2b6ae231586f50c0af914f7b6665c2b6cfecac8ed9e7b68e440": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply explains family plan invitation steps, which are unrelated to the customer's issue of lacking an Indosat payment option."
+  },
+  "e8ad1c19165ee10306ad2a28fa6f15d8538492ed6d049bb596f4ab5469b159a1": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested password reset steps do not address the Facebook linking conflict, which requires account merging or unlinking, not a password reset."
+  },
+  "ea0aa506645a0ee030f7884c91f24bb2ffc9f3bbf79a520262c8f18ffefb542b": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "A clean reinstall and cache clear addresses common client\u2011side glitches that cause offline tracks to disappear on Android."
+  },
+  "de45a77a4e3535dddaa061b70888ed24917b0fb342fc38316dd63c1fdcdd7f94": {
+    "resolves_problem": false,
+    "confidence": 0.75,
+    "reason": "Logging out and restarting does not address the specific offline download removal issue, which likely requires cache clearing or offline settings adjustments."
+  },
+  "1829b33443e10e5f03403857b64bc1c6dccda7e8149526ca843c29057a840c40": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The complaint concerns Spotify's shuffle algorithm repeating the same album, which is a backend behavior not fixed by logging out or restarting the device."
+  },
+  "4339837c56e95e68d742dd1e65fb22fdc5de62107c56ef57dc4ff094873907f2": {
+    "resolves_problem": true,
+    "confidence": 0.75,
+    "reason": "Logging out and restarting forces a session refresh that can disconnect the other active Spotify instance, addressing the multi\u2011device conflict the user experienced."
+  },
+  "cf1aabe7ac314d5867f9fcde1a39d68e3bc4f3dc6579467599b216eb1a84adb2": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested console/TV power cycle and Connect steps are unrelated to the user's issue of having another Spotify instance on a Mac causing the problem."
+  },
+  "c87171769895edb856c6dedd8eab3020fe817b1a831fb5313dab655556ea4c50": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "The user already reports improvement after a device restart, so a full clean reinstall is unnecessary and does not address any remaining issue."
+  },
+  "74bb9992e67c5b76272c6e3aebf973c87bc2fbcac2812c039dfe365a82904ef7": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested password reset steps do not address the offline mode login lockout described by the customer."
+  },
+  "74cc2b058232653960286605487fb8f42c14b3ae52181f40cc3628148bce1865": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply addresses family plan invitation steps, which are unrelated to the customer's request to cancel their subscription."
+  },
+  "b3b1c425c100daaaabad7fa290cabb887b3d8a349b39ec10f467d139ca93fac4": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "Logging out, restarting the app/device, and logging back in addresses common client\u2011side glitches like skipping and repetitive shuffle, making it a plausible fix for the described playback issues."
+  },
+  "21a5e8941da95c9ba625c7724b4217b6407288174f373ded0d74799b8a45dba9": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested family plan invitation steps are unrelated to the playback glitches and shuffle issues the user is experiencing."
+  },
+  "c9c4f6c4d53c73b6c9f571d69d7daf5e5984e8b563685609ebb75e6a7a88e290": {
+    "resolves_problem": false,
+    "confidence": 0.86,
+    "reason": "Logging out and restarting does not address iOS background playback interruptions caused by other apps, so it is unlikely to fix the described issue."
+  },
+  "453904c712683cba791ad447810fccfa97bb62f95850c3d081c7338825287a16": {
+    "resolves_problem": false,
+    "confidence": 0.78,
+    "reason": "The suggested logout and reboot are generic steps that don't address the iOS background playback interruption causing Spotify to stop when other apps are used."
+  },
+  "d57c91593fa78e695c06e3d2ef58798e944cc4ab1c2b32ded8d4cc50978a3c9c": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The suggested console/TV power cycle and Spotify Connect steps do not address the user's complaints about Safari support on High Sierra or family plan address restrictions."
+  },
+  "8067bfc9a1fb72c40f43a1363a852e0e30b2807fb1d812e970ca701bf1fea1cc": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "Reinstalling and clearing the app's cache addresses corrupted local data that commonly causes crashes on iOS devices."
+  },
+  "47f99529c4c5a9463a5e0125b6e9c343cc082756ef75d87ff93b59f4b36a502f": {
+    "resolves_problem": true,
+    "confidence": 0.75,
+    "reason": "Logging out, fully closing the app, and restarting the device are standard client\u2011side steps that often fix crash issues on iOS devices."
+  },
+  "51fa6c6dce229e307d493cac3ccc4292c6c75430fd2dc7184c52a70bcb22568d": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "Missing album art is often caused by corrupted local cache, and a clean reinstall with cache clearing directly addresses that client\u2011side glitch."
+  },
+  "2e8189b6e53fc2cb7537261266d6757146d90c496d2d4a396fadd6ddba99141c": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The steps focus on power cycling and device pairing, which do not address missing album art caused by UI or cache issues."
+  },
+  "95c529e0eacdbeeedf0857deadd758c764538bc5a6aaefbaa022c3d34ab44a17": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply only requests additional details and does not provide any actionable solution to the sign\u2011up issue."
+  },
+  "f40d1bb82c197e7bd3f4231200b93903bac55dc7e7f0e3444d9a02483200b247": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The issue is incorrect artist metadata on Spotify's side, which cannot be fixed by logging out or restarting the device."
+  },
+  "5fa26fd981a2633171a71b80e814efa1ddcfb5e5903b855950f45b8796d4dc33": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply explains how to invite family members to a plan, which does not address the customer's question about existing premium members."
+  },
+  "6bc230416cb97a8e1103814031a468fd737795b325b1e9a249f0c6cd8d5a7c5b": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply suggests a password reset, which does not address the inability to play a specific artist likely due to licensing or availability issues."
+  },
+  "f852bb1cdba4cf0a482ee1e36a1cac886e69ad276c7d7a879e301484e5488e2a": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "A clean reinstall clears corrupted local cache and app files that can cause playback freezes on specific tracks, making it a plausible fix for the described client\u2011side glitch."
+  },
+  "9781f9e9e0c9ae9e9fc4a3e3a4ac61ef9115979960a65c5129029e51c77e580a": {
+    "resolves_problem": true,
+    "confidence": 0.78,
+    "reason": "A session refresh and device restart can clear corrupted cache or session data that often cause playback freezes on specific tracks."
+  },
+  "15ca8da5be28998d085f2acf8b304a0c63d7ccdd2ceb1b4ca1107306007415d6": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "The user reports paid subscription but no access, likely a billing/account issue, which a password reset does not address."
+  },
+  "22a71c85aa3b84d44a076a3f66b0628285105cc705f9168bda22ead7d41ec242": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply explains family/duo plan invitation steps, which are unrelated to the customer's unpaid access issue."
+  },
+  "3526eb1ca2b19d616cd16fa924dbb2a6081a48e32cb0c66b76b136ae2c0c6d6b": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply offers a Spotify password reset, which is unrelated to the customer's request for a concert pre\u2011sale password."
+  },
+  "b2b35d28aea4a32792b171fc2432fdccc37a602d1b86382642c355728fb6d489": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The user already tried uninstalling and reinstalling and reports they cannot reinstall, so repeating those steps does not address the underlying issue."
+  },
+  "f49a202eb0a317d60628a9bb760c797f49a7e3392dbea1a1bafacdfb18285dd9": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The suggested password reset steps directly address the inability to log into the account, which is a typical client\u2011side fix for access problems."
+  },
+  "5e1b5060d25de44f649fdc495eb7c730f090edea710bd6fe4553685a21a826aa": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply addresses console/TV Spotify Connect issues, but the customer only provided device and app version with no related problem, making the suggestion irrelevant."
+  },
+  "77f3658e0b62d9efd2eb489baf30a6a5a623f87ea1a7db3672b1530b13455f6b": {
+    "resolves_problem": true,
+    "confidence": 0.8,
+    "reason": "Logging out, restarting, and logging back in forces a library sync that can restore missing followed artists, addressing the client\u2011side display issue."
+  },
+  "76d7762f2d47204fd8dd1dfd0bca36dc6c5b2348644d2fa44bc547999be9b5c2": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested console/TV power cycle and Connect pairing address device connectivity, not missing followed artists in the library."
+  },
+  "2ed0a5b66c000e4ade80cb08811c4dd354cdb3a43bf3c8e609c5c97f54834fee": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested installer repair steps target a corrupted client install, while the user's 404 error indicates a service-side issue that cannot be fixed locally."
+  },
+  "76342a133dc3e9b0ded121aed82d8bb1b4f30a6afc984002ad20ae745fa0ccd4": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The user reports a 404 error likely due to a backend outage, but the reply only suggests clearing cache and claims everything is fine, which does not address the service interruption."
+  },
+  "b319d47bee100e3d21e5158a5ec1d064b6d6405b74b9bfcb97db1629c601eaa4": {
+    "resolves_problem": true,
+    "confidence": 0.86,
+    "reason": "Playback skipping is a client\u2011side glitch and a session/device restart is a standard fix that can clear corrupted buffers or network hiccups."
+  },
+  "6edc66497ab9ae59c42b5aee9f56455a5ffc0aa2dedab6ccadf72354ad241ed3": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "The suggested logout, app close, and device restart are standard client\u2011side steps that can clear cache and session issues causing freezing and song restarts."
+  },
+  "656aa521cb350ab13133864707e4d70ddc6a26707849b8407139f20fc858562c": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The reply explains family/duo plan invitation steps, which do not address the customer's request for help with a premium subscription."
+  },
+  "0b0996c2156adb55e58c620c3a78437096d4cf50f3ed8041b25b3eeb41d033b6": {
+    "resolves_problem": false,
+    "confidence": 0.96,
+    "reason": "The suggested family\u2011plan invitation steps are unrelated to the premium skip\u2011limit issue the user is experiencing."
+  },
+  "d4fa6559395ba6603260aa015b6ac5626945735dd086937c1cd71deffcc7feaf": {
+    "resolves_problem": false,
+    "confidence": 0.99,
+    "reason": "The reply about family plan invitation steps is unrelated to the customer's complaint about unauthorized debit card charges."
+  },
+  "acb98392719423ebd0fa0e7b449daa6d917dafb466432589fb5f9dae69459b7d": {
+    "resolves_problem": false,
+    "confidence": 0.82,
+    "reason": "The steps only refresh the session and device, but the issue likely stems from a backend or feature-specific bug with Radio, which generic logout/restart won't fix."
+  }
+}

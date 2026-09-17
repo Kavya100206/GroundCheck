@@ -156,14 +156,34 @@ class GroundingRetriever:
         np.save(EMBEDDINGS_CACHE_PATH, self.embeddings)
         print(f"Cached resolution corpus and embeddings to disk.")
 
-    def retrieve(self, query: str, intent: Optional[str] = None, top_k: int = 3) -> List[Dict[str, Any]]:
-        """Retrieve top-k most similar historical resolutions."""
+    def retrieve(
+        self,
+        query: str,
+        intent: Optional[str] = None,
+        candidate_intents: Optional[List[str]] = None,
+        top_k: int = 3
+    ) -> List[Dict[str, Any]]:
+        """Retrieve top-k most similar historical resolutions across candidate intents or full corpus."""
         clean_q = strip_handle(query)
         if not clean_q:
             return []
         q_emb = self.model.encode([clean_q], normalize_embeddings=True)[0]
 
-        if intent and intent in INTENT_PATS:
+        if candidate_intents:
+            valid_candidates = [ci for ci in candidate_intents if ci in INTENT_PATS]
+            mask = self.corpus_df['silver_intent'].isin(valid_candidates).values
+            if mask.sum() >= top_k:
+                sub_indices = np.where(mask)[0]
+                sub_embs = self.embeddings[sub_indices]
+                sims = np.dot(sub_embs, q_emb)
+                top_local_idxs = np.argsort(sims)[::-1][:top_k]
+                top_global_idxs = sub_indices[top_local_idxs]
+                top_scores = sims[top_local_idxs]
+            else:
+                sims = np.dot(self.embeddings, q_emb)
+                top_global_idxs = np.argsort(sims)[::-1][:top_k]
+                top_scores = sims[top_global_idxs]
+        elif intent and intent in INTENT_PATS:
             # Intent-scoped retrieval
             mask = (self.corpus_df['silver_intent'] == intent).values
             if mask.sum() >= top_k:

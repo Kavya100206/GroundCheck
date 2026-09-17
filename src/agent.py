@@ -27,21 +27,46 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from src.classifier import IntentClassifier
 from src.retrieval import GroundingRetriever, strip_handle
 from src.policy import CuratedPolicyReference
-from src.escalation import decide_escalation, DEFAULT_TAU
+from src.escalation import decide_escalation, check_hard_gates, DEFAULT_TAU
+from src.resolution_check import ProblemResolutionChecker
 from src.drafter import ReplyDrafter
 
 GOLDEN_PATH = "/Users/kavya/Desktop/Groundcheck/golden_set_to_label.csv"
 AGENT_PREDICTIONS_CACHE = "/Users/kavya/Desktop/Groundcheck/src/agent_predictions_golden151.csv"
 
 class SpotifySupportAgent:
-    def __init__(self, tau: float = DEFAULT_TAU):
+    def __init__(
+        self,
+        tau: float = DEFAULT_TAU,
+        tau_low: Optional[float] = 0.65,
+        tau_high: Optional[float] = 0.73,
+        retrieval_policy: str = "scoped",
+        use_resolution_check: bool = True
+    ):
         self.tau = tau
+        self.tau_low = tau_low
+        self.tau_high = tau_high
+        self.retrieval_policy = retrieval_policy
+        self.use_resolution_check = use_resolution_check
         print("Initializing SpotifySupportAgent pipeline...")
         self.classifier = IntentClassifier(model_name="qwen/qwen3.8-27b")
         self.retriever = GroundingRetriever()
         self.policy = CuratedPolicyReference()
         self.drafter = ReplyDrafter(model_name="qwen/qwen3.8-27b")
-        print(f"Agent initialized successfully with calibrated threshold tau={self.tau:.2f}.")
+        if self.use_resolution_check:
+            self.resolution_checker = ProblemResolutionChecker(model_name="openai/gpt-oss-120b")
+        else:
+            self.resolution_checker = None
+        print(f"Agent initialized successfully (policy={self.retrieval_policy}, tau_low={self.tau_low}, tau_high={self.tau_high}, check={self.use_resolution_check}).")
+
+    def _get_candidate_procedure(self, hit: Optional[Dict[str, Any]], intent: str, text: str) -> str:
+        """Extract candidate troubleshooting procedure from historical match or curated SOP fallback."""
+        if hit and self.drafter._is_concrete_resolution(hit.get("brand_reply", "")):
+            return hit["brand_reply"]
+        sop = self.policy.find_matching_sop(intent, text)
+        if sop:
+            return f"{sop['name']}: " + " ".join(sop['steps'])
+        return "General Troubleshooting: Restart your device and refresh network connection."
 
     def process(
         self,
@@ -77,22 +102,38 @@ class SpotifySupportAgent:
             confidence = clf_result.get("confidence", 0.8)
 
         # 2. Dense Semantic Retrieval
-        ret_hits = self.retriever.retrieve(customer_text, intent=predicted_intent, top_k=1)
+        if self.retrieval_policy == "global":
+            ret_hits = self.retriever.retrieve(customer_text, intent=None, top_k=1)
+        else:
+            ret_hits = self.retriever.retrieve(customer_text, intent=predicted_intent, top_k=1)
         top_sim = ret_hits[0]["similarity"] if ret_hits else 0.0
 
-        # 3. Two-Layer Escalation Decision
+        # 3. Pre-drafting Problem-Resolution Verification Gate
+        resolution_check_result = None
+        t_low = self.tau_low if self.tau_low is not None else self.tau
+        hard_gate = check_hard_gates(customer_text, predicted_intent)
+        if hard_gate is None and self.use_resolution_check and self.resolution_checker is not None and top_sim >= t_low:
+            top_hit = ret_hits[0] if ret_hits else None
+            c_intent = top_hit.get("silver_intent", predicted_intent) if (self.retrieval_policy == "global" and top_hit) else predicted_intent
+            candidate_procedure = self._get_candidate_procedure(top_hit, c_intent, customer_text)
+            resolution_check_result = self.resolution_checker.check_resolution(customer_text, candidate_procedure)
+
+        # 4. Two-Layer Escalation Decision
         esc_result = decide_escalation(
             customer_text=customer_text,
             predicted_intent=predicted_intent,
             retrieval_similarity=top_sim,
             classifier_confidence=confidence,
-            tau=self.tau
+            tau=self.tau,
+            tau_low=self.tau_low,
+            tau_high=self.tau_high,
+            resolution_check_result=resolution_check_result
         )
         decision = esc_result["decision"]
         decision_reason = esc_result["decision_reason"]
         gate_triggered = esc_result["gate_triggered"]
 
-        # 4. Grounded Reply Drafting (reuse existing draft if decision did not change)
+        # 5. Grounded Reply Drafting (reuse existing draft if decision did not change)
         if cached_draft is not None and cached_draft.get("decision") == decision and pd.notna(cached_draft.get("drafted_reply")):
             draft_result = {
                 "drafted_reply": cached_draft["drafted_reply"],

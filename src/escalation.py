@@ -82,13 +82,20 @@ def decide_escalation(
     predicted_intent: str,
     retrieval_similarity: float,
     classifier_confidence: float = 1.0,
-    tau: float = DEFAULT_TAU
+    tau: float = DEFAULT_TAU,
+    tau_low: Optional[float] = None,
+    tau_high: Optional[float] = None,
+    resolution_check_result: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Two-layer escalation decision engine:
     Layer 1: Hard rule gates.
-    Layer 2: Calibrated confidence threshold on dense retrieval similarity proxy.
+    Layer 2: Calibrated confidence boundary with optional LLM problem-resolution verification.
     """
+    # Default threshold resolution
+    t_low = tau_low if tau_low is not None else tau
+    t_high = tau_high if tau_high is not None else tau
+
     # Layer 1: Hard rule gates
     hard_gate_result = check_hard_gates(customer_text, predicted_intent)
     if hard_gate_result is not None:
@@ -98,27 +105,64 @@ def decide_escalation(
             "decision_reason": reason,
             "gate_triggered": gate_name,
             "calibrated_confidence": float(retrieval_similarity),
-            "threshold_used": tau,
+            "threshold_used": t_low,
             "decision_layer": "layer_1_hard_gate"
         }
 
-    # Layer 2: Calibrated confidence boundary
-    if retrieval_similarity >= tau:
+    # Layer 2: Calibrated confidence boundary + Resolution Verification
+    # Case A: Below lower bound -> unconditional escalation (preserve latency/cost)
+    if retrieval_similarity < t_low:
         return {
-            "decision": "auto_handle",
-            "decision_reason": f"High grounding confidence (similarity {retrieval_similarity:.3f} >= threshold {tau:.2f}); standard troubleshooting applicable",
+            "decision": "escalate",
+            "decision_reason": f"Low grounding confidence (similarity {retrieval_similarity:.3f} < threshold {t_low:.2f}); ambiguous failure requires agent inspection",
             "gate_triggered": None,
             "calibrated_confidence": float(retrieval_similarity),
-            "threshold_used": tau,
+            "threshold_used": t_low,
             "decision_layer": "layer_2_calibrated_confidence"
+        }
+
+    # Case B: Resolution checker explicit veto (applies to all candidates >= t_low, catching FM3)
+    if resolution_check_result is not None and not resolution_check_result.get("resolves_problem", False):
+        veto_reason = resolution_check_result.get("reason", "Candidate procedure does not resolve customer problem")
+        return {
+            "decision": "escalate",
+            "decision_reason": f"Procedural brush-off veto (resolution check failed): {veto_reason}",
+            "gate_triggered": "resolution_check_veto",
+            "calibrated_confidence": float(retrieval_similarity),
+            "threshold_used": t_low,
+            "decision_layer": "layer_2_resolution_check_veto"
+        }
+
+    # Case C: High grounding confidence (similarity >= t_high)
+    if retrieval_similarity >= t_high:
+        return {
+            "decision": "auto_handle",
+            "decision_reason": f"High grounding confidence (similarity {retrieval_similarity:.3f} >= threshold {t_high:.2f}); standard troubleshooting applicable",
+            "gate_triggered": None,
+            "calibrated_confidence": float(retrieval_similarity),
+            "threshold_used": t_high,
+            "decision_layer": "layer_2_calibrated_confidence"
+        }
+
+    # Case D: Moderate band [t_low, t_high)
+    # Auto-handle only if explicitly verified by resolution check
+    if resolution_check_result is not None and resolution_check_result.get("resolves_problem", False):
+        check_reason = resolution_check_result.get("reason", "Candidate procedure verified to resolve customer problem")
+        return {
+            "decision": "auto_handle",
+            "decision_reason": f"Moderate grounding confidence (similarity {retrieval_similarity:.3f} >= {t_low:.2f}) verified by resolution check: {check_reason}",
+            "gate_triggered": None,
+            "calibrated_confidence": float(retrieval_similarity),
+            "threshold_used": t_low,
+            "decision_layer": "layer_2_resolution_check_verified"
         }
     else:
         return {
             "decision": "escalate",
-            "decision_reason": f"Low grounding confidence (similarity {retrieval_similarity:.3f} < threshold {tau:.2f}); ambiguous failure requires agent inspection",
+            "decision_reason": f"Moderate grounding confidence (similarity {retrieval_similarity:.3f} < {t_high:.2f}) unverified by resolution check; routing to specialist",
             "gate_triggered": None,
             "calibrated_confidence": float(retrieval_similarity),
-            "threshold_used": tau,
+            "threshold_used": t_high,
             "decision_layer": "layer_2_calibrated_confidence"
         }
 

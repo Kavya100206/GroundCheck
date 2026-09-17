@@ -207,8 +207,16 @@ The codebase provides two distinct, explicitly separated verification modes:
 2. **Verification Mode B (Cold-Start Full Regeneration, ~2.5 to 3.5 minutes):** Clean execution from scratch (regenerating embeddings across 8,310 docs in ~7.6s, live classification of 132 rows in ~45s, live escalation routing and drafting of 151 rows in ~45s, and live judge evaluation of 50 rows in ~40s), finishing comfortably under the 15-minute assignment limit.
 
 ### 9.2 Strategic Next Steps (Post-Evaluation Roadmap)
-1. **Judge Rubric Redesign (Two-Stage Decoupling):** Redesign the judge rubric into a two-stage evaluation: first assess whether the customer's stated problem is meaningfully addressed, independent of SOP-text match, before scoring evidence groundedness. This directly resolves the literal textual match failure modes discovered in Phase 5, and was deliberately deferred to maintain the frozen-prompt anti-tuning commitment for the current evaluation cycle.
-2. **Soft Multi-Partition Dense Retrieval:** Expand retrieval to search across the top-2 predicted intent corpora with cross-encoder re-ranking, eliminating the 29.3% of false escalations caused by upstream classification bleed.
-3. **Query Expansion / Paraphrase Rewriting:** Normalize terse, colloquial customer tweets into standard technical symptom descriptions before computing dense embeddings, bridging the 70.7% colloidal phrasing dead zone.
+
+The system's failure modes point directly to five concrete architectural mitigations for future production cycles:
+
+1. **FM 1 Mitigation — Soft Multi-Partition Dense Retrieval:** Expand dense retrieval to query across the top-2 predicted intent corpora with cross-encoder re-ranking, eliminating the 29.3% of false escalations caused by upstream classification bleed.
+2. **FM 2 Mitigation — Query Expansion & Paraphrase Rewriting:** Normalize terse, colloquial customer tweets into standard technical symptom descriptions before computing dense embeddings, bridging the 69.0% colloidal phrasing dead zone.
+3. **FM 3 Mitigation — Two-Stage Decoupled Evaluation (Judge & Drafter):** Redesign the judge rubric and agent self-check into a two-stage evaluation: first assess whether the customer's stated problem is meaningfully addressed, independent of SOP-text match, before scoring evidence groundedness. Deliberately deferred during Phase 5 to preserve frozen-prompt anti-tuning integrity.
+4. **FM 4 Mitigation — Negative Exemplar & Constraint Filtering:** Require explicit multi-factor verification (e.g., explicit mention of "Family", "Duo", or "invite") before activating specialized billing SOPs, eliminating misattributions where individual payment inquiries map to Family Plan invite instructions.
+5. **FM 5 Mitigation — Curated SOP Corpus Expansion:** Expand `CuratedPolicyReference` from 17 to 50 granular, platform-specific verified procedures, providing formal public fallbacks for the 78% of historical Twitter traffic that deflects to DMs without public resolutions.
+
+> *(See [`phase6_failure_analysis.md`](phase6_failure_analysis.md) for the complete failure-to-mitigation mapping table, root-cause mechanisms, and verbatim tweet row audits).*
+
 
 

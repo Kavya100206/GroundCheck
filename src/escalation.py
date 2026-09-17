@@ -17,17 +17,18 @@ Phase 4 Component — Two-Layer Escalation Decision Architecture.
 import re
 from typing import Dict, Any, Tuple, Optional
 
-# Layer 1: Non-overridable deterministic hard gate patterns
+# Layer 1: Non-overridable deterministic hard gate patterns (tightened against substring collisions)
 BILLING_GATE_RE = re.compile(
-    r'\b(charge|charged|billing|refund|cancel\s+subscription|payment|fee|invoice|bank|money|credit\s+card|unauthorized\s+charge)\b',
+    r'\b(charge|charged|billing|refund|cancel\s+subscription|payment|fee|invoice|credit\s+card|unauthorized\s+charge)\b',
     re.IGNORECASE
 )
 SECURITY_GATE_RE = re.compile(
-    r'\b(hacked|hack|unauthorized|stolen|compromised|breach|hijack|hijacked|someone\s+else\s+is\s+using|unauthorized\s+access)\b',
+    r'\b(hacked|unauthorized|stolen|compromised|breach|hijacked|someone\s+else\s+is\s+using|unauthorized\s+access)\b',
     re.IGNORECASE
 )
 LEGAL_GATE_RE = re.compile(
-    r'\b(lawsuit|attorney|lawyer|sue|suing|legal\s+action|police|harassment|threat|court|arbitration)\b',
+    r'\b(lawsuit|attorney|lawyer|suing|sue\s+you|will\s+sue|going\s+to\s+sue|legal\s+action|harassment|threat|arbitration|'
+    r'call\s+(the\s+)?police|report\s+to\s+(the\s+)?police|in\s+court|take\s+(you\s+)?to\s+court)\b',
     re.IGNORECASE
 )
 EXHAUSTED_TROUBLESHOOTING_RE = re.compile(

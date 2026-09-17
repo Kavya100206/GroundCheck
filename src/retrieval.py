@@ -64,6 +64,8 @@ FEATURE_REQ_EXCLUDE_RE = re.compile(
 )
 
 def strip_handle(text):
+    if text is None:
+        return ""
     return re.sub(r'^(@\w+\s*)+', '', str(text)).strip()
 
 def detect_lang_fast(text):
@@ -157,6 +159,8 @@ class GroundingRetriever:
     def retrieve(self, query: str, intent: Optional[str] = None, top_k: int = 3) -> List[Dict[str, Any]]:
         """Retrieve top-k most similar historical resolutions."""
         clean_q = strip_handle(query)
+        if not clean_q:
+            return []
         q_emb = self.model.encode([clean_q], normalize_embeddings=True)[0]
 
         if intent and intent in INTENT_PATS:

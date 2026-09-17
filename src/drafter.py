@@ -15,6 +15,7 @@ Strict Guardrails:
 
 import os
 import sys
+import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import re
 import socket
@@ -94,16 +95,26 @@ This case has been marked for ESCALATION to a human specialist team for the foll
 
 Draft a polite, empathetic Twitter reply letting the customer know we are looking into this and routing their case to our specialist team for further assistance. Remind them that for account or billing safety, our team may follow up in a private message. Do NOT include any URLs."""
 
-            resp = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {"role": "system", "content": DRAFTING_SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=0.0,
-                max_tokens=90
-            )
-            draft = resp.choices[0].message.content.strip().replace('"', '')
+            draft = None
+            for attempt in range(3):
+                try:
+                    resp = self.client.chat.completions.create(
+                        model=self.model_name,
+                        messages=[
+                            {"role": "system", "content": DRAFTING_SYSTEM_PROMPT},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        temperature=0.0,
+                        max_tokens=90
+                    )
+                    draft = resp.choices[0].message.content.strip().replace('"', '')
+                    break
+                except Exception as e:
+                    if attempt < 2:
+                        time.sleep(1.0 * (attempt + 1))
+                    else:
+                        draft = "We’re looking into this issue and routing your case to our specialist team for assistance. Thank you for your patience."
+
             return {
                 "drafted_reply": draft,
                 "grounding_source": "none",
@@ -143,18 +154,26 @@ Grounding Evidence ({grounding_source}):
 Draft a concise, empathetic customer support tweet guiding the customer through the specific troubleshooting steps above.
 Rules: Stay strictly within the provided steps. Do NOT invent any URLs. Keep under 250 characters."""
 
-        resp = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[
-                {"role": "system", "content": DRAFTING_SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.0,
-            max_tokens=90
-        )
-        draft = resp.choices[0].message.content.strip().replace('"', '')
-        # Remove any stray URLs that LLM might hallucinate despite instructions
-        draft = re.sub(r'https?://\S+', '', draft).strip()
+        draft = None
+        for attempt in range(3):
+            try:
+                resp = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=[
+                        {"role": "system", "content": DRAFTING_SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.0,
+                    max_tokens=90
+                )
+                draft = resp.choices[0].message.content.strip().replace('"', '')
+                draft = re.sub(r'https?://\S+', '', draft).strip()
+                break
+            except Exception as e:
+                if attempt < 2:
+                    time.sleep(1.0 * (attempt + 1))
+                else:
+                    draft = "We’re looking into this issue and routing your case to our specialist team for assistance. Thank you for your patience."
 
         return {
             "drafted_reply": draft,

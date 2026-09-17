@@ -235,7 +235,11 @@ class CuratedPolicyReference:
     def find_matching_sop(self, intent: str, query_text: str) -> Optional[Dict[str, Any]]:
         """Find the most specific SOP matching customer query keywords."""
         sops = self.get_policies_for_intent(intent)
-        q_lower = query_text.lower()
+        if query_text is None:
+            return sops[0] if sops else None
+        q_lower = str(query_text).strip().lower()
+        if not q_lower:
+            return sops[0] if sops else None
         
         # Check for specific trigger keyword matches
         for sop in sops:

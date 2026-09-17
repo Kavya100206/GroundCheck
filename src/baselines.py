@@ -58,11 +58,12 @@ FEATURE_REQ_EXCLUDE_RE = re.compile(
     re.IGNORECASE
 )
 
-# Hard escalation gates per system.md
+# Hard escalation gates per system.md (tightened against substring collisions)
 ESCALATION_HARD_GATES_RE = re.compile(
-    r'\b(charge|charged|billing|refund|cancel\s+subscription|payment|fee|invoice|bank|money|credit\s+card|'
-    r'hacked|hack|unauthorized|stolen|compromised|breach|'
-    r'lawsuit|attorney|lawyer|sue|suing|legal\s+action|police|harassment|threat)\b',
+    r'\b(charge|charged|billing|refund|cancel\s+subscription|payment|fee|invoice|credit\s+card|unauthorized\s+charge|'
+    r'hacked|unauthorized|stolen|compromised|breach|'
+    r'lawsuit|attorney|lawyer|suing|sue\s+you|will\s+sue|going\s+to\s+sue|legal\s+action|harassment|threat|arbitration|'
+    r'call\s+(the\s+)?police|report\s+to\s+(the\s+)?police|in\s+court|take\s+(you\s+)?to\s+court)\b',
     re.IGNORECASE
 )
 

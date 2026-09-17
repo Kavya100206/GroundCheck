@@ -25,7 +25,7 @@ from typing import Dict, Any, List, Optional
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from src.classifier import IntentClassifier
-from src.retrieval import GroundingRetriever
+from src.retrieval import GroundingRetriever, strip_handle
 from src.policy import CuratedPolicyReference
 from src.escalation import decide_escalation, DEFAULT_TAU
 from src.drafter import ReplyDrafter
@@ -52,6 +52,21 @@ class SpotifySupportAgent:
         cached_draft: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Run complete single-message inference pipeline."""
+        # Type safety & degenerate input guard
+        clean_text = strip_handle(customer_text) if customer_text is not None else ""
+        if not clean_text:
+            return {
+                "id": message_id,
+                "predicted_intent": "other",
+                "drafted_reply": "We’re here to help! Could you please provide more details about the issue you’re experiencing so our team can look into it?",
+                "decision": "escalate",
+                "decision_reason": "Customer message is empty or too short to classify; routing to specialist team",
+                "grounding_source": "none",
+                "evidence_used": ["Degenerate input: Empty or handle-only message"],
+                "gate_triggered": "degenerate_input",
+                "calibrated_confidence": 0.0
+            }
+
         # 1. Intent Classification (reuse cached result if provided)
         if known_intent is not None:
             predicted_intent = known_intent

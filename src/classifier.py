@@ -141,7 +141,7 @@ class IntentClassifier:
                     model=self.model_name,
                     messages=messages,
                     temperature=0.0,
-                    max_tokens=80,
+                    max_tokens=200,
                     response_format={"type": "json_object"}
                 )
                 raw_content = resp.choices[0].message.content.strip()

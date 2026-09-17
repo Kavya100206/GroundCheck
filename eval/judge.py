@@ -94,8 +94,21 @@ class SupportReplyJudge:
         Evaluate a single drafted reply using the LLM judge.
         Returns a structured dictionary conforming to ARCHITECTURE.md §4.
         """
-        # Hard deterministic check for synthetic URLs
-        has_url = bool(re.search(r'https?://\S+|t\.co/\S+', drafted_reply, re.IGNORECASE))
+        # Extract actual URLs from reply and evidence separately
+        URL_PATTERN = re.compile(r'https?://\S+|t\.co/\S+', re.IGNORECASE)
+        reply_urls = URL_PATTERN.findall(drafted_reply)
+        evidence_urls = URL_PATTERN.findall(str(evidence_used))
+
+        # A synthetic URL is any URL in the reply that does not genuinely match a URL in evidence
+        has_synthetic_url = False
+        if reply_urls:
+            cleaned_evidence_urls = [u.rstrip('.,?!:;)"\'') for u in evidence_urls]
+            for r_url in reply_urls:
+                cleaned_r_url = r_url.rstrip('.,?!:;)"\'')
+                if not any(cleaned_r_url in e_url or e_url in cleaned_r_url for e_url in cleaned_evidence_urls):
+                    has_synthetic_url = True
+                    break
+
         char_len = len(drafted_reply)
 
         user_content = f"""Customer Inquiry:
@@ -111,7 +124,7 @@ Drafted Reply:
 "{drafted_reply}"
 
 Character Count: {char_len}
-Synthetic URL Detected by regex: {has_url}
+Synthetic URL Detected by regex: {has_synthetic_url}
 
 Evaluate this reply and return ONLY the JSON object."""
 
@@ -147,10 +160,10 @@ Evaluate this reply and return ONLY the JSON object."""
             notes = f"Judge parsing exception: {str(e)}"
 
         # Deterministic guardrail: synthetic URL forces groundedness=1 and fail
-        if has_url and "t.co" not in evidence_used and "http" not in evidence_used:
+        if has_synthetic_url:
             groundedness = 1
             decision_val = "fail"
-            notes = f"Deterministic Guardrail Triggered: Synthetic URL detected in reply. {notes}"
+            notes = f"Deterministic Guardrail Triggered: Synthetic URL detected in reply ({', '.join(reply_urls)}). {notes}"
 
         # Deterministic guardrail: length > 280 forces fail
         if char_len > 280 and decision_val == "pass":
@@ -165,6 +178,6 @@ Evaluate this reply and return ONLY the JSON object."""
             "judge_notes": notes,
             "difficulty_tier": difficulty_tier,
             "char_count": char_len,
-            "has_synthetic_url": has_url,
+            "has_synthetic_url": has_synthetic_url,
             "judge_model": self.model_name
         }

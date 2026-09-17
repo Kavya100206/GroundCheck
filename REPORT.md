@@ -234,9 +234,10 @@ A core requirement of this project is explicitly confronting the ways headline m
 ## 9. Next Steps (Future Enhancements & Reproducibility Guarantees)
 
 ### 9.1 Reproducibility Benchmarks
-The codebase provides two distinct, explicitly separated verification modes:
-1. **Verification Mode A (Instant Cached Replay, < 2 seconds):** Runs `python3 -m eval.metrics` and `python3 -m eval.validate_judge` to mathematically verify reported numbers against disk artifacts in ~1.5s.
-2. **Verification Mode B (Cold-Start Full Regeneration, ~2.5 to 3.5 minutes):** Clean execution from scratch (regenerating embeddings across 8,310 docs in ~7.6s, live classification of 132 rows in ~45s, live escalation routing and drafting of 151 rows in ~45s, and live judge evaluation of 50 rows in ~40s), finishing comfortably under the 15-minute assignment limit.
+The codebase provides three distinct, explicitly separated verification modes:
+1. **Verification Mode A (Instant Cached Replay, < 2 seconds):** Runs `python3 -m eval.metrics` and `python3 -m eval.validate_judge` to mathematically verify reported numbers against disk artifacts in ~1.8s.
+2. **Verification Mode B (Default Cold-Start on Stratified Subsample, < 15 minutes):** Clean end-to-end execution from scratch on a stratified 38-row subsample (25% of golden set) via `python3 src/agent.py --no-cache` (measured wall-clock: ~5.7 minutes), verifying live multi-model LLM completions, dense embeddings, and two-threshold routing well within the 15-minute assignment limit.
+3. **Verification Mode C (Optional Full 151-Row Cold-Start Regeneration, ~24 minutes):** Exhaustive cold-start regeneration across all 151 golden threads and 50 live judge evaluations via `python3 src/agent.py --full --no-cache` (measured standalone wall-clock: 1425.4s / ~23.8 min), reproducing every number reported in this document.
 
 ### 9.2 Strategic Next Steps (Post-Evaluation Roadmap)
 

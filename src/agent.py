@@ -168,6 +168,7 @@ class SpotifySupportAgent:
         }
 
 def evaluate_agent(
+    subsample: Optional[int] = 38,
     tau_low: Optional[float] = 0.65,
     tau_high: Optional[float] = 0.73,
     policy: str = "scoped",
@@ -175,15 +176,34 @@ def evaluate_agent(
     tau: float = DEFAULT_TAU,
     use_cache: bool = True
 ):
-    """Run full agent evaluation over the 151 golden set rows with incremental persistence."""
+    """Run agent evaluation over golden set or stratified subsample with incremental persistence."""
+    golden_df = pd.read_csv(GOLDEN_PATH)
+    
+    if subsample is not None and subsample < len(golden_df):
+        from sklearn.model_selection import train_test_split
+        strat = golden_df["gold_intent"] + "_" + golden_df["difficulty_tier"]
+        _, eval_df = train_test_split(
+            golden_df,
+            test_size=subsample,
+            stratify=strat,
+            random_state=42
+        )
+        eval_df = eval_df.reset_index(drop=True)
+        out_csv_path = "/Users/kavya/Desktop/Groundcheck/src/agent_predictions_subsample.csv"
+        scope_str = f"Stratified Subsample N={len(eval_df)}/151"
+    else:
+        eval_df = golden_df
+        out_csv_path = AGENT_PREDICTIONS_CACHE
+        scope_str = f"Full Golden Set N={len(eval_df)}"
+
     mode_str = f"tau_low={tau_low}, tau_high={tau_high}, policy={policy}, check={use_resolution_check}"
     print(f"\n========================================================")
-    print(f"SPOTIFY SUPPORT AGENT EVALUATION (N=151 Golden Set, {mode_str})")
+    print(f"SPOTIFY SUPPORT AGENT EVALUATION ({scope_str}, {mode_str})")
     print(f"========================================================")
-    golden_df = pd.read_csv(GOLDEN_PATH)
-    y_true = golden_df["gold_decision"]
-    easy_mask = golden_df["difficulty_tier"] == "easy"
-    hard_mask = golden_df["difficulty_tier"] == "hard"
+
+    y_true = eval_df["gold_decision"]
+    easy_mask = eval_df["difficulty_tier"] == "easy"
+    hard_mask = eval_df["difficulty_tier"] == "hard"
 
     cached_clf = {}
     if use_cache and os.path.exists(CLASSIFIER_PREDICTIONS_PATH):
@@ -196,9 +216,9 @@ def evaluate_agent(
             cached_clf = {}
 
     existing_records = {}
-    if use_cache and os.path.exists(AGENT_PREDICTIONS_CACHE):
+    if use_cache and os.path.exists(out_csv_path):
         try:
-            cached_df = pd.read_csv(AGENT_PREDICTIONS_CACHE)
+            cached_df = pd.read_csv(out_csv_path)
             for _, r in cached_df.iterrows():
                 existing_records[str(r["id"])] = r.to_dict()
             print(f"Loaded {len(existing_records)} prior agent predictions from disk for smart draft reuse.")
@@ -212,11 +232,11 @@ def evaluate_agent(
         retrieval_policy=policy,
         use_resolution_check=use_resolution_check
     )
-    print(f"Executing agent inference over {len(golden_df)} golden set threads ({mode_str})...")
+    print(f"Executing agent inference over {len(eval_df)} golden set threads ({mode_str})...")
     start_time = time.time()
     records = []
 
-    for idx, (_, row) in enumerate(golden_df.iterrows()):
+    for idx, (_, row) in enumerate(eval_df.iterrows()):
         msg_id = str(row["id"])
         known_intent, known_conf = cached_clf.get(msg_id, (None, None))
         cached_d = existing_records.get(msg_id, None)
@@ -233,58 +253,72 @@ def evaluate_agent(
         out["gold_intent"] = row["gold_intent"]
         records.append(out)
 
-        # Incremental save every 25 rows
-        if (idx + 1) % 25 == 0 or (idx + 1) == len(golden_df):
+        # Incremental save every 10 rows
+        if (idx + 1) % 10 == 0 or (idx + 1) == len(eval_df):
             temp_df = pd.DataFrame(records)
-            temp_df.to_csv(AGENT_PREDICTIONS_CACHE, index=False)
-            print(f"  Processed {idx + 1}/{len(golden_df)} rows ({time.time() - start_time:.1f}s)...")
+            temp_df.to_csv(out_csv_path, index=False)
+            print(f"  Processed {idx + 1}/{len(eval_df)} rows ({time.time() - start_time:.1f}s)...")
 
     pred_df = pd.DataFrame(records)
-    pred_df.to_csv(AGENT_PREDICTIONS_CACHE, index=False)
-    print(f"Saved full agent predictions to {AGENT_PREDICTIONS_CACHE} ({time.time() - start_time:.1f}s).")
+    pred_df.to_csv(out_csv_path, index=False)
+    print(f"Saved agent predictions to {out_csv_path} ({time.time() - start_time:.1f}s).")
 
     y_pred = pred_df["decision"]
     acc_overall = accuracy_score(y_true, y_pred)
-    acc_easy = accuracy_score(y_true[easy_mask], y_pred[easy_mask])
-    acc_hard = accuracy_score(y_true[hard_mask], y_pred[hard_mask])
+    acc_easy = accuracy_score(y_true[easy_mask], y_pred[easy_mask]) if easy_mask.sum() > 0 else 0.0
+    acc_hard = accuracy_score(y_true[hard_mask], y_pred[hard_mask]) if hard_mask.sum() > 0 else 0.0
 
     fah = sum(1 for yt, yp in zip(y_true, y_pred) if yt == "escalate" and yp == "auto_handle")
     fe = sum(1 for yt, yp in zip(y_true, y_pred) if yt == "auto_handle" and yp == "escalate")
+    fah_total = sum(y_true == "escalate")
+    fe_total = sum(y_true == "auto_handle")
 
-    # Stratified Held-Out Evaluation Split (N=76)
-    from sklearn.model_selection import train_test_split
-    strat = pred_df["gold_intent"] + "_" + pred_df["difficulty_tier"]
-    calib_df, held_out_df = train_test_split(
-        pred_df,
-        test_size=0.5,
-        stratify=strat,
-        random_state=42
-    )
-    y_true_ho = held_out_df["gold_decision"]
-    y_pred_ho = held_out_df["decision"]
-    acc_ho = accuracy_score(y_true_ho, y_pred_ho)
-    fah_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "escalate" and yp == "auto_handle")
-    fah_ho_total = sum(y_true_ho == "escalate")
-    fe_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "auto_handle" and yp == "escalate")
-    fe_ho_total = sum(y_true_ho == "auto_handle")
-    cost_ho = 4.0 * fah_ho + 1.0 * fe_ho
+    if subsample is not None and subsample < len(golden_df):
+        cost_sub = 4.0 * fah + 1.0 * fe
+        print("\n--------------------------------------------------------")
+        print(f"SUBSAMPLE EVALUATION REPORT (N={len(eval_df)} Stratified Rows)")
+        print("--------------------------------------------------------")
+        print(f"Overall Escalation Accuracy: {acc_overall*100:.2f}% ({sum(y_true == y_pred)}/{len(eval_df)})")
+        print(f"  Easy Tier Accuracy (N={easy_mask.sum()}):  {acc_easy*100:.2f}% ({sum((y_true == y_pred) & easy_mask)}/{easy_mask.sum()})")
+        print(f"  Hard Tier Accuracy (N={hard_mask.sum()}):  {acc_hard*100:.2f}% ({sum((y_true == y_pred) & hard_mask)}/{hard_mask.sum()})")
+        print(f"False Auto-Handles (FAH):    {fah:2d}/{fah_total} ({fah/fah_total*100:4.2f}%)")
+        print(f"False Escalations (FE):      {fe:2d}/{fe_total} ({fe/fe_total*100:4.2f}%)")
+        print(f"Asymmetric Cost (4*FAH+1*FE): {cost_sub:.1f}")
+    else:
+        # Stratified Held-Out Evaluation Split (N=76)
+        from sklearn.model_selection import train_test_split
+        strat = pred_df["gold_intent"] + "_" + pred_df["difficulty_tier"]
+        calib_df, held_out_df = train_test_split(
+            pred_df,
+            test_size=0.5,
+            stratify=strat,
+            random_state=42
+        )
+        y_true_ho = held_out_df["gold_decision"]
+        y_pred_ho = held_out_df["decision"]
+        acc_ho = accuracy_score(y_true_ho, y_pred_ho)
+        fah_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "escalate" and yp == "auto_handle")
+        fah_ho_total = sum(y_true_ho == "escalate")
+        fe_ho = sum(1 for yt, yp in zip(y_true_ho, y_pred_ho) if yt == "auto_handle" and yp == "escalate")
+        fe_ho_total = sum(y_true_ho == "auto_handle")
+        cost_ho = 4.0 * fah_ho + 1.0 * fe_ho
 
-    print("\n--------------------------------------------------------")
-    print("PRIMARY HONEST ESTIMATE: HELD-OUT SPLIT (N=76)")
-    print("--------------------------------------------------------")
-    print(f"Overall Escalation Accuracy: {acc_ho*100:.2f}% ({sum(y_true_ho == y_pred_ho)}/{len(held_out_df)})")
-    print(f"False Auto-Handles (FAH):    {fah_ho:2d}/{fah_ho_total} ({fah_ho/fah_ho_total*100:4.2f}%)")
-    print(f"False Escalations (FE):      {fe_ho:2d}/{fe_ho_total} ({fe_ho/fe_ho_total*100:4.2f}%)")
-    print(f"Asymmetric Cost (4*FAH+1*FE): {cost_ho:.1f}")
+        print("\n--------------------------------------------------------")
+        print("PRIMARY HONEST ESTIMATE: HELD-OUT SPLIT (N=76)")
+        print("--------------------------------------------------------")
+        print(f"Overall Escalation Accuracy: {acc_ho*100:.2f}% ({sum(y_true_ho == y_pred_ho)}/{len(held_out_df)})")
+        print(f"False Auto-Handles (FAH):    {fah_ho:2d}/{fah_ho_total} ({fah_ho/fah_ho_total*100:4.2f}%)")
+        print(f"False Escalations (FE):      {fe_ho:2d}/{fe_ho_total} ({fe_ho/fe_ho_total*100:4.2f}%)")
+        print(f"Asymmetric Cost (4*FAH+1*FE): {cost_ho:.1f}")
 
-    print("\n--------------------------------------------------------")
-    print("SECONDARY BOUND: FULL GOLDEN SET (N=151)")
-    print("--------------------------------------------------------")
-    print(f"Overall Escalation Accuracy: {acc_overall*100:.2f}% (Baseline 3: 53.00%) -> Margin: {acc_overall*100 - 53.0:+.2f}%")
-    print(f"  Easy Tier Accuracy (N={easy_mask.sum()}):  {acc_easy*100:.2f}% (Baseline 3: 56.00%)")
-    print(f"  Hard Tier Accuracy (N={hard_mask.sum()}):  {acc_hard*100:.2f}% (Baseline 3: 51.50%)")
-    print(f"False Auto-Handles (FAH):    {fah:2d}/68 ({fah/68*100:4.1f}%) (Baseline 3: 27/68, 39.7%)")
-    print(f"False Escalations (FE):      {fe:2d}/83 ({fe/83*100:4.1f}%) (Baseline 3: 44/83, 53.0%)")
+        print("\n--------------------------------------------------------")
+        print("SECONDARY BOUND: FULL GOLDEN SET (N=151)")
+        print("--------------------------------------------------------")
+        print(f"Overall Escalation Accuracy: {acc_overall*100:.2f}% (Baseline 3: 53.00%) -> Margin: {acc_overall*100 - 53.0:+.2f}%")
+        print(f"  Easy Tier Accuracy (N={easy_mask.sum()}):  {acc_easy*100:.2f}% (Baseline 3: 56.00%)")
+        print(f"  Hard Tier Accuracy (N={hard_mask.sum()}):  {acc_hard*100:.2f}% (Baseline 3: 51.50%)")
+        print(f"False Auto-Handles (FAH):    {fah:2d}/68 ({fah/68*100:4.1f}%) (Baseline 3: 27/68, 39.7%)")
+        print(f"False Escalations (FE):      {fe:2d}/83 ({fe/83*100:4.1f}%) (Baseline 3: 44/83, 53.0%)")
 
     print("\n--------------------------------------------------------")
     print("GROUNDING SOURCE BREAKDOWN")
@@ -312,7 +346,9 @@ def evaluate_agent(
     }
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run SpotifySupportAgent evaluation over golden set.")
+    parser = argparse.ArgumentParser(description="Run SpotifySupportAgent evaluation over golden set or subsample.")
+    parser.add_argument("--subsample", type=int, default=None, help="Evaluate on a stratified subsample of N rows (default: 38 unless --full)")
+    parser.add_argument("--full", action="store_true", help="Evaluate over the full 151 golden set rows (~24 min runtime)")
     parser.add_argument("--tau-low", type=float, default=0.65, help="Lower similarity threshold for LLM verification (default: 0.65)")
     parser.add_argument("--tau-high", type=float, default=0.73, help="Upper similarity threshold (default: 0.73)")
     parser.add_argument("--policy", type=str, default="scoped", choices=["scoped", "global"], help="Retrieval partition policy (default: scoped)")
@@ -321,7 +357,10 @@ if __name__ == "__main__":
     parser.add_argument("--no-cache", action="store_true", help="Force re-inference without cache")
     args = parser.parse_args()
 
+    subsample_n = None if args.full else (args.subsample if args.subsample is not None else 38)
+
     evaluate_agent(
+        subsample=subsample_n,
         tau_low=args.tau_low,
         tau_high=args.tau_high,
         policy=args.policy,
@@ -329,3 +368,4 @@ if __name__ == "__main__":
         tau=args.tau,
         use_cache=not args.no_cache
     )
+

@@ -1118,5 +1118,15 @@
     "resolves_problem": false,
     "confidence": 0.82,
     "reason": "The steps only refresh the session and device, but the issue likely stems from a backend or feature-specific bug with Radio, which generic logout/restart won't fix."
+  },
+  "1868bab5c4937481498f1c47e82a018c4019fcc66fe24277f52328b44ea2a6b8": {
+    "resolves_problem": true,
+    "confidence": 0.85,
+    "reason": "Logging out, restarting, and logging back in refreshes the session and can correct a client\u2011side misrecognition of premium status that is causing the erroneous skip limit."
+  },
+  "8a1c47f698e4cb66fce03c4da97d771a3b1ef57a013be5f1af5e271a285c240e": {
+    "resolves_problem": false,
+    "confidence": 0.75,
+    "reason": "The suggested logout and device restart address general session issues, not the specific crash when sharing, so it is unlikely to fix the reported problem."
   }
 }

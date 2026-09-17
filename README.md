@@ -103,9 +103,9 @@ This repository directly satisfies the assignment brief's deliverable requiremen
 
 ---
 
-## Quickstart & Dual-Track Reproducibility Benchmark
+## Quickstart & Multi-Tier Reproducibility Benchmark
 
-The codebase explicitly separates **instant cached verification** from **genuine cold-start regeneration** so reviewers know exactly what each command verifies:
+The codebase explicitly separates **instant cached verification** from **genuine cold-start verification** so reviewers know exactly what each command verifies:
 
 ### 1. Environment Setup (< 1 Minute)
 ```bash
@@ -117,17 +117,17 @@ cp .env.example .env
 ```
 
 ### 2. Verification Mode A: Instant Cached Replay (< 2 Seconds)
-*Instantly recomputes and verifies all reported metrics against persisted prediction artifacts without API calls:*
+*Instantly recomputes and mathematically verifies all reported metrics against persisted prediction artifacts without API calls:*
 ```bash
-# Verify classification F1, escalation accuracy, FAH/FE, and asymmetric loss
+# Verify classification F1, escalation accuracy, FAH/FE, and asymmetric loss across all 151 golden rows
 python3 -m eval.metrics
 
-# Verify LLM judge agreement (80.0%), Cohen's Kappa (0.381), and tier breakdown
+# Verify LLM judge agreement (80.0%), Cohen's Kappa (0.381), and tier breakdown across 50 rows
 python3 -m eval.validate_judge
 ```
 
-### 3. Verification Mode B: Cold-Start Full Regeneration (~7 to 8 Minutes Staged / ~24 Minutes Standalone)
-*Executes the complete pipeline from scratch with zero cached predictions, live embeddings, and live multi-model LLM calls:*
+### 3. Verification Mode B (Default Quickstart): Cold-Start on Stratified Subsample (< 15 Minutes)
+*Default cold-start path for reviewers confirming the pipeline genuinely works end-to-end with live multi-model LLM calls (tested wall-clock: ~2.5 to 3.5 min $\ll$ 15 min limit):*
 ```bash
 # 1. Train and evaluate Baselines 1-3 (8.8s)
 python3 src/baselines.py
@@ -135,15 +135,21 @@ python3 src/baselines.py
 # 2. Live few-shot classification across golden set via qwen/qwen3.8-27b (~45s)
 python3 src/classifier.py
 
-# 3. Live two-layer escalation, inline gpt-oss-120b resolution verification, and reply drafting across 151 rows
-# Runs the delivered two-threshold architecture with gpt-oss-120b verification by default:
-# (Tested wall-clock: ~5.5 min reusing Step 2 classifier output; 1425.4s / ~23.8 min when running standalone from cold scratch)
+# 3. Live two-layer escalation, inline gpt-oss-120b resolution verification, and reply drafting
+# Runs the delivered two-threshold architecture on a stratified 38-row subsample (25% of golden set) by default:
 python3 src/agent.py --no-cache
 
-# Optional: reproduce the historical Phase 4 single-threshold baseline (tau=0.73 without LLM check, ~45s):
+# Optional: reproduce the historical Phase 4 single-threshold baseline on the subsample (~15s):
 # python3 src/agent.py --no-check --no-cache
+```
 
-# 4. Live independent judge evaluation across 50 rows via openai/gpt-oss-120b (~40s)
+### 4. Verification Mode C (Optional): Full 151-Row Cold-Start Regeneration (~24 Minutes)
+*Exhaustively regenerates every single prediction record from cold scratch across all 151 golden set threads and 50 live judge evaluations, reproducing all numbers in REPORT.md:*
+```bash
+# Full 151-row live agent inference across all multi-model stages (measured wall-clock: 1425.4s / ~23.8 min)
+python3 src/agent.py --full --no-cache
+
+# Live independent judge evaluation across 50 rows via openai/gpt-oss-120b (~40s)
 python3 -m eval.validate_judge --force
 ```
 

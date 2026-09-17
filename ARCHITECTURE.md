@@ -203,6 +203,6 @@ The test harness is organized into two distinct tiers:
    - **Adversarial Safety Invariants:** 5 hand-crafted high-stakes prompts (double billing charge, Russian account takeover, lawsuit threat, 3x reinstall crash, iPhone X display compatibility) assert unconditional human escalation even if similarity is artificially forced to $s=0.99$.
    - **Resolution Checker Offline Regression:** With persistent caching (`src/resolution_check_cache.json`), resolution check evaluations execute as zero-latency local dict lookups, enabling deterministic regression testing of the two-threshold decision engine (`src/escalation.py`) in CI without live API keys.
    - **URL Guardrail Unit Verification:** Asserts that reply drafting regex filters fail any drafted response containing hallucinated synthetic links not present in evidence.
-2. **End-to-End Live LLM Tier (Cold-Start Mode B, ~7–8 min staged / ~24 min standalone):**
-   - Evaluates full pipeline over golden set rows via pinned models: `qwen/qwen3.8-27b` (classification and reply drafting) and `openai/gpt-oss-120b` (independent resolution checking and post-hoc audit judge).
-   - Validates live JSON parsing, temperature 0.0 determinism, rate-limit backoff, and ensures live escalation metrics match cached figures within statistical tolerance (measured standalone wall-clock: 1425.4s / 23.8 min).
+2. **End-to-End Live LLM Tier:**
+   - **Mode B (Default Cold-Start Subsample, <15 min):** Evaluates live pipeline over a stratified 38-row golden subsample via `python3 src/agent.py --no-cache`, verifying multi-model completions, tools, and two-threshold routing end-to-end well within assignment limits.
+   - **Mode C (Full Cold-Start Regeneration, ~24 min):** Exhaustively evaluates all 151 golden set rows and 50 judge evaluations via `python3 src/agent.py --full --no-cache` and `python3 -m eval.validate_judge --force` (measured standalone wall-clock: 1425.4s / 23.8 min).

@@ -2,6 +2,14 @@
 
 This document tracks all formal architectural choices, empirical pivots, threshold selections, and scope boundaries established across the project. Extracted verbatim from project records.
 
+### Executive Phase Index
+- **Phase 1 (Brand Selection, Filtering & Heuristic Auditing):** Entries 1–7
+- **Phase 2 (Intent Taxonomy, Golden Set Hardening & Baselines):** Entries 8–12
+- **Phase 3 (Single-Model Intent Classifier Evaluation):** Entries 13–15
+- **Phase 4 (Grounded Policy Reference, 17 SOPs & Calibrated Confidence):** Entries 16–19
+- **Phase 5 (Evaluation Harness, Independent LLM Judge & Validation):** Entries 20–23
+- **Phase 6 (Comprehensive Failure Taxonomy & Dual-Track Reproducibility):** Entry 24
+
 ---
 
 1. **SpotifyCares chosen over AmazonHelp and AppleSupport** — Real computed numbers confirmed the working hypothesis: AmazonHelp fails intent-diversity criterion (too broad for 4–6 intent cap, disqualifying regardless of resolution rate); AppleSupport fails visible-resolution criterion (30.8% DM-redirect + link-dump replies).
@@ -73,7 +81,7 @@ This document tracks all formal architectural choices, empirical pivots, thresho
       - *False Escalations (FE):* **58/83 (69.88%)** vs Baseline 3's **44/83 (53.01%)** — an increase of 14 false escalations (+16.87 percentage points).
     - **Intent Breakdown of the 58 False Escalation Cases:**
       - *Intent Distribution:* `playback_issue`: 26 / 33 handleables falsely escalated (78.8%), `account_login`: 8 / 13 (61.5%), `device_platform`: 7 / 11 (63.6%), `app_technical`: 6 / 9 (66.7%), `other`: 6 / 6 (100.0%), `premium_billing`: 5 / 11 (45.5%).
-      - *Failure Mechanisms:* 57 of the 58 cases were triggered by Layer 2 similarity falling below $\tau = 0.73$ (only 1 by Layer 1 `billing_dispute` hard gate). Upstream intent misclassification accounted for 29.3% of FEs (17/58, heavily `playback_issue` misclassified as `app_technical`), scoping dense retrieval to the wrong intent partition and suppressing similarity scores. The remaining 70.7% (41 cases) were correctly classified but fell into the $0.55–0.72$ similarity band, just below the safety threshold.
+      - *Failure Mechanisms:* 57 of the 58 cases were triggered by Layer 2 similarity falling below $\tau = 0.73$, and 1 case was triggered by Layer 1 (`gs_0133`, where *"credit card"* triggered `billing_dispute` on an in-app stuck web-form loading issue, accounting for 1.7%, 1/58). Among the 57 Layer 2 cases: upstream intent misclassification accounted for 29.3% of FEs (17/58, heavily `playback_issue` misclassified as `app_technical`), scoping dense retrieval to the wrong intent partition and suppressing similarity scores. The remaining 40 cases (69.0%, 40/58) were correctly classified by intent but fell into the $0.55–0.72$ similarity dead zone just below the safety threshold ($17 + 40 + 1 = 58$).
     - **Honest FAH Assessment & The Inescapable Automation Tradeoff:**
       - The earlier report framed tying Baseline 3 at $\tau=0.68$ ($\text{FAH} = 39.7\%$) as "safety parity" / "preserving safety." This framing was fundamentally dishonest: tying a weak, noisy baseline on the single most dangerous error class under asymmetric error weighting is an outright missed target, not safety preservation.
       - Can the 15% target be reached without FE collapsing? **No.** The empirical curve proves that reaching $\text{FAH} \le 15\%$ forces False Escalations to surge to **$69.9\%$** ($\tau=0.73$), $75.9\%$ ($\tau=0.75$), and $83.1\%$ ($\tau=0.78$). A scalar dense retrieval similarity proxy cannot reliably separate nuanced complaints on elliptical tweets without sacrificing over two-thirds of automated handling capacity to human queues.
@@ -93,4 +101,11 @@ This document tracks all formal architectural choices, empirical pivots, thresho
 23. **Validation set golden subset reuse and disaggregated small-N statistical uncertainty** — The 50 validation rows were drawn from the 151-row golden set (all 35 auto-handled drafts + 15 representative escalations; 20 easy, 30 hard). Logged two essential methodological limitations:
     - *Reuse Limitation:* The 80.00% agreement ($\kappa = 0.381$) measures fit to already-exposed golden set labels, not generalization to unseen customer traffic (identical in nature to the $\tau=0.73$ calibration leakage).
     - *Small-N Asymptotic Variance:* With $N_{easy}=20$ and $N_{hard}=30$, asymptotic standard errors are large ($SE_{easy} = 0.280, SE_{hard} = 0.222$), yielding broad 95% confidence intervals (`[-0.173, 0.923]` and `[-0.043, 0.827]`). Disaggregated kappa point estimates alone overstate precision; they must be reported with their respective standard errors to prevent over-interpretation.
+
+24. **Phase 6 synthesis, top-5 failure mode taxonomy, and dual-track reproducibility standard** — Compiled all empirical findings across the evaluation cycle into finalized deliverables:
+    - *Top-5 Failure Taxonomy Formalization:* Dissected the five system-governing error modes (Upstream Intent Bleed, Colloquial Dense Retrieval Dead Zone, Procedure Sycophancy, Sparse SOP Misattribution, and the 78% Historical Visible-Resolution Deficit) with verbatim customer examples and architectural root causes.
+    - *Dual-Track Reproducibility Standard:* Explicitly split the reproducibility claims into two distinct, honest benchmarks rather than conflating cached validation with cold regeneration:
+      1. **Verification Mode A (Instant Cached Replay):** `< 2 seconds` across `python3 -m eval.metrics` and `python3 -m eval.validate_judge` to mathematically verify disk artifacts.
+      2. **Verification Mode B (Cold-Start Full Regeneration):** `~2.5 to 3.5 minutes` total wall-clock time from a clean clone without caches (embedding 8,310 documents in 7.6s, 132 live classification calls in ~45s, 151 live routing and drafting calls in ~45s, and 50 live judge calls in ~40s). Confirms cold-start reproduction comfortably under the 15-minute assignment limit.
+
 

@@ -82,39 +82,52 @@ Under asymmetric error weighting, False Auto-Handles (FAH: sending incorrect aut
 
 This repository directly satisfies the assignment brief's deliverable requirements:
 
-1. [`REPORT.md`](file:///Users/kavya/Desktop/Groundcheck/REPORT.md) — Comprehensive problem framing, empirical evaluation vs Baselines 1–3, failure analysis (breakdown of the 58 false escalations), and honest self-audit ("What Is Misleading About My Headline Number").
-2. [`DECISION_LOG.md`](file:///Users/kavya/Desktop/Groundcheck/DECISION_LOG.md) — Complete chronological log of all 19 formal decisions, data pivots, keyword heuristic tightening, and calibration choices.
+1. [`REPORT.md`](file:///Users/kavya/Desktop/Groundcheck/REPORT.md) — Comprehensive problem framing, empirical evaluation vs Baselines 1–3, Top-5 Failure Taxonomy, Phase 5 independent judge validation, and honest self-audit ("What Is Misleading About My Headline Numbers").
+2. [`DECISION_LOG.md`](file:///Users/kavya/Desktop/Groundcheck/DECISION_LOG.md) — Complete chronological log of all 24 formal decisions, data pivots, keyword heuristic tightening, and calibration choices with an Executive Phase Index.
 3. [`ARCHITECTURE.md`](file:///Users/kavya/Desktop/Groundcheck/ARCHITECTURE.md) — Complete technical specification: component breakdown, data schemas, dual grounding mechanics, and the LLM/deterministic boundary.
-4. [`golden_set_to_label.csv`](file:///Users/kavya/Desktop/Groundcheck/golden_set_to_label.csv) — 151 hand-labelled, stratified golden evaluation set (intent, visible resolution, escalation decision, and difficulty tier).
-5. [`phase1b_methodology.md`](file:///Users/kavya/.gemini/antigravity-ide/brain/92f70b72-6271-4605-99d1-46d40c0955f8/phase1b_methodology.md) — Rigorous sampling methodology note disclosing stratification shape, contamination rules, and difficulty distribution.
+4. [`eval/metrics.py`](file:///Users/kavya/Desktop/Groundcheck/eval/metrics.py) — Automated evaluation harness computing classification F1, headline escalation accuracy, FAH, FE, and asymmetric loss ($4 \times \text{FAH} + 1 \times \text{FE}$).
+5. [`eval/judge.py`](file:///Users/kavya/Desktop/Groundcheck/eval/judge.py) — Independent cross-architecture LLM judge (`openai/gpt-oss-120b`) evaluating Groundedness (1–5, zero synthetic URLs) and Tone (1–5).
+6. [`eval/validate_judge.py`](file:///Users/kavya/Desktop/Groundcheck/eval/validate_judge.py) — Human-judge validation study across 50 golden rows reporting Cohen's Kappa, asymptotic standard errors, and tier disaggregation.
+7. [`golden_set_to_label.csv`](file:///Users/kavya/Desktop/Groundcheck/golden_set_to_label.csv) — 151 hand-labelled, stratified golden evaluation set (intent, visible resolution, escalation decision, and difficulty tier).
 
 ---
 
-## Quickstart & Reproduction (< 2 Minutes)
+## Quickstart & Dual-Track Reproducibility Benchmark
 
-### 1. Installation
+The codebase explicitly separates **instant cached verification** from **genuine cold-start regeneration** so reviewers know exactly what each command verifies:
+
+### 1. Environment Setup (< 1 Minute)
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env with your GROQ_API_KEY
+# Add your GROQ_API_KEY to .env
 ```
 
-### 2. Run Baselines (Phase 2)
+### 2. Verification Mode A: Instant Cached Replay (< 2 Seconds)
+*Instantly recomputes and verifies all reported metrics against persisted prediction artifacts without API calls:*
 ```bash
+# Verify classification F1, escalation accuracy, FAH/FE, and asymmetric loss
+python3 -m eval.metrics
+
+# Verify LLM judge agreement (80.0%), Cohen's Kappa (0.381), and tier breakdown
+python3 -m eval.validate_judge
+```
+
+### 3. Verification Mode B: Cold-Start Full Regeneration (~2.5 to 3.5 Minutes)
+*Executes the complete pipeline from scratch with zero cached predictions, live embeddings, and live LLM calls (tested wall-clock: ~3.0 min $\ll$ 15 min limit):*
+```bash
+# 1. Train and evaluate Baselines 1-3 (8.8s)
 python3 src/baselines.py
-```
-*Evaluates Baseline 1 (always escalate), Baseline 2 (TF-IDF LogReg classifier), and Baseline 3 (retrieval + rule gate) across the 151 golden rows.*
 
-### 3. Run Intent Classifier (Phase 3)
-```bash
+# 2. Live few-shot classification across golden set via qwen/qwen3.8-27b (~45s)
 python3 src/classifier.py
-```
-*Evaluates `qwen/qwen3.8-27b` across all 132 in-taxonomy golden rows.*
 
-### 4. Run Full Agent Pipeline (Phase 4)
-```bash
-python3 src/agent.py --tau 0.73
+# 3. Live two-layer escalation and grounded reply drafting across 151 rows (~45s)
+python3 src/agent.py --tau 0.73 --no-cache
+
+# 4. Live independent judge evaluation across 50 rows via openai/gpt-oss-120b (~40s)
+python3 -m eval.validate_judge --force
 ```
-*Runs the complete pipeline (classification, dense retrieval, two-layer escalation, dual-grounded reply drafting) across all 151 golden rows in ~5 seconds using disk caches.*
+

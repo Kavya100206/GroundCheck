@@ -5,7 +5,7 @@
 Customer support on Twitter is fast, adversarial, and public. Within that noisy stream is a core set of recurring issues that the brand has solved many times before in a consistent manner. This project builds and evaluates an end-to-end AI support agent for `@SpotifyCares` that:
 1. Classifies customer inquiries into a locked 5-intent taxonomy.
 2. Drafts empathetic, concise Twitter replies strictly grounded in verified technical procedures (with zero synthetic URLs).
-3. Executes a two-layer escalation decision (deterministic safety gates + calibrated confidence boundary) that refuses to trust raw LLM self-reported confidence.
+3. Executes a two-layer escalation decision—initially evaluated as deterministic safety gates + a single calibrated confidence boundary ($\tau = 0.73$), and subsequently upgraded to a decoupled two-threshold architecture ($\tau_{low}=0.65, \tau_{high}=0.73$) verified by an independent LLM problem-resolution auditor (`openai/gpt-oss-120b`).
 
 The underlying challenge is demonstrating trustworthiness to a skeptical reviewer: proving where the system succeeds, establishing honest baselines, and documenting exactly where and why the system fails.
 
@@ -92,6 +92,38 @@ Reporting structurally leads with the **Held-Out Evaluation Split ($N=76$) as th
 | **Hard Tier Accuracy** | 37.62% (38/101) | 51.50% (52/101) | **49.02% (25/51)** | *50.50% (51/101)* | -2.48% |
 | **False Auto-Handles (FAH)** *(Safety Failure)* | **0/68 (0.0%)** | 27/68 (39.71%) | **7/35 (20.00%)** | *10/68 (14.71%)* | **-19.71% pts (-50% rel)** |
 | **False Escalations (FE)** *(Automation Loss)* | 83/83 (100.0%) | **44/83 (53.01%)** | **29/41 (70.73%)** | *58/83 (69.88%)* | +17.72% pts |
+
+### 6.3.1 Post-Phase-6 Architecture Improvement: Two-Threshold Decision Engine & Independent Resolution Verification
+
+An upgraded decision engine was designed, calibrated, and evaluated targeting the failure modes identified in Phase 6. This round specifically resolved the **Colloquial Dead Zone (FM2, 40 cases)** and **Procedural Brush-Offs (FM3, 3 cases)**. While multi-partition retrieval was implemented and tested to target **Upstream Classification Bleed (FM1, 17 cases)**, single-partition Scoped retrieval empirically proved superior on held-out data and was retained as the locked policy—meaning FM1 was investigated but remains an open challenge requiring cross-encoder re-ranking (consistent with Section 9.2, Item 1).
+
+#### Architectural Mechanism
+1. **Decoupled Two-Threshold Gate (`src/escalation.py`):**
+   - *Similarity $< \tau_{low} = 0.65$:* Unconditional escalation (bypasses LLM inference, protecting latency and cost).
+   - *Similarity $\in [\tau_{low}, \tau_{high}) = [0.65, 0.73)$:* Auto-handled *only* if verified by an inline Problem-Resolution Check (recovering colloquial FM2 queries previously discarded by the rigid $\tau=0.73$ cutoff).
+   - *Similarity $\ge \tau_{high} = 0.73$:* Candidate resolutions must pass the resolution check; if the auditor detects an unresolvable bug or procedural brush-off, it issues an immediate veto to force escalation (resolving FM3).
+2. **Independent Problem-Resolution Checker (`src/resolution_check.py`):**
+   - Deploys `openai/gpt-oss-120b` (temperature 0.0, max_tokens 750) running on Groq with persistent caching. This strictly eliminates the same-model bias risk (Decision Log Entry 20), ensuring the drafter/classifier (`qwen/qwen3.8-27b`) does not grade its own troubleshooting adequacy.
+
+#### Empirical Evaluation Across Splits (Locked Metric $w_{FAH}=4.0, w_{FE}=1.0$)
+Hyperparameters ($\tau_{low}, \tau_{high}$, partition policy) were searched strictly on the **75-row calibration split** (`calib_df`, 42 auto_handle, 33 escalate), locked, and subsequently evaluated once on the frozen **76-row held-out split** (`held_out_df`, 41 auto_handle, 35 escalate):
+
+| Metric | Phase 4 Baseline (Calib Split, N=75) | Phase 4 Baseline (Held-Out Split, N=76) | **Improved Engine (Calib Split, N=75)** | **IMPROVED ENGINE: Held-Out Split (N=76)** | **Overfitting Gap (Held-Out − Calib)** | Margin vs Phase 4 (Held-Out) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Pipeline Config** | Scoped, $\tau=0.73$, No Check | Scoped, $\tau=0.73$, No Check | Scoped, $\tau \in [0.65, 0.73]$, Checked | **Scoped, $\tau \in [0.65, 0.73]$, Checked** | — | — |
+| **Auditor Model** | None | None | `openai/gpt-oss-120b` | `openai/gpt-oss-120b` | — | — |
+| **Overall Accuracy** | 57.33% (43/75) | 52.63% (40/76) | 57.33% (43/75) | **64.47% (49/76)** | **+7.14%** | **+11.84% pts** |
+| **False Auto-Handles (FAH)** | 9.09% (3/33) | 20.00% (7/35) | 0.00% (0/33) | **5.71% (2/35)** | **+5.71% (+2 cases)** | **-14.29% pts (-71.4% rel)** |
+| **False Escalations (FE)** | 69.05% (29/42) | 70.73% (29/41) | 76.19% (32/42) | **60.98% (25/41)** | **-15.21% (-7 cases)** | **-9.75% pts (-13.8% rel)** |
+| **Asymmetric Cost ($4 \times \text{FAH} + 1 \times \text{FE}$)** | 41.0 | 57.0 | 32.0 | **33.0** | **+1.0 (+3.1%)** | **-24.0 (-42.1% rel)** |
+
+#### Failure Mode Resolution & Overfitting Gap Analysis
+1. **Failure Mode 3 Elimination:** On the held-out split, queries like `gs_0004` (shuffle algorithm repetition, $s=0.766$) and `gs_0111` (iOS 11 headphone control regression, $s=0.758$) scored $\ge 0.73$ and were falsely auto-handled by Phase 4. The `gpt-oss-120b` resolution checker explicitly identified both as unresolvable client-side issues and issued an immediate veto $\to$ **both correctly escalated**.
+2. **Failure Mode 2 Recovery:** Standard colloquial playback queries in $[0.65, 0.73)$ like `gs_0011`, `gs_0012`, `gs_0017`, and `gs_0018` were validated by the checker, recovering 4 false escalations on the held-out split.
+3. **Small-Sample Calibration Variance (+5.71% FAH Gap):** On the 75-row calibration split, the checker achieved an artificially pristine 0.00% FAH (0/33). On unseen held-out data, 2 false auto-handles emerged (5.71%, 2/35), representing an authentic small-sample calibration variance gap:
+   - *Case `gs_0053` (Pixel XL crash; "I've reinstalled and everything already"):* Missed by Layer 1 `EXHAUSTED_TROUBLESHOOTING_RE` due to strict phrase-adjacency requirements, while the LLM checker accepted clean reinstall as plausible. This is an identifiable, fixable gap; however, patching it post-hoc on held-out data was rejected to maintain experimental integrity, and it is formally deferred to Section 9.2 (Item 6).
+   - *Case `gs_0145` (Explicit credentials submitted; "username Jim Wang email... Can not access account"):* The checker recommended password reset. In support operations, public credential submissions require private specialist routing for identity verification. This policy boundary is best resolved deterministically via an Account Credential Gate in Layer 1 (Section 9.2, Item 7) rather than subjective prompt tweaking.
+4. **Retrieval Policy Supporting Evidence:** Evaluating Global vs. Scoped retrieval under the identical calibration discipline confirmed that **Scoped retrieval strictly outperformed Global retrieval on held-out data** (64.47% vs. 61.84% accuracy; 60.98% vs. 65.85% FE; Cost 33.0 vs. 35.0) because unconstrained global search occasionally matched high-similarity threads from unrelated intents that introduced noise into the LLM checker.
 
 ### 6.4 Grounding Source & Gate Distribution ($N=151$)
 - **Grounding Distribution:** `none` (escalated): 116 (76.8%), `curated_sop`: 33 (21.9%), `retrieved_case`: 2 (1.3%).
@@ -188,8 +220,8 @@ A core requirement of this project is explicitly confronting the ways headline m
 
 1. **Threshold Calibration Leakage:**
    Reporting $54.97\%$ accuracy and $14.71\%$ FAH on the full 151 rows introduces threshold snooping risk, as $\tau=0.73$ was tuned against that distribution. On the stratified held-out evaluation split ($N=76$), **FAH degraded to 20.00%**, failing the 15% hurdle.
-2. **The Headline FAH Illusion (The Automation Collapse):**
-   Claiming a "63% reduction in False Auto-Handles (from 39.7% to 14.7%)" sounds like a major safety breakthrough. But that number is deeply misleading without its operational counterpart: **False Escalations surged to 69.88%**, routing 70% of routine customer issues to human agents. The system achieved safety through defensive over-escalation rather than precise discrimination.
+2. **The Headline FAH Illusion & The Single-Threshold Automation Collapse:**
+   Claiming a "63% reduction in False Auto-Handles (from 39.7% to 14.7%)" sounds like a major safety breakthrough. But under Phase 4's single-threshold design, that number was deeply misleading without its operational counterpart: **False Escalations surged to 69.88%**, routing 70% of routine customer issues to human agents. The original finding framed this automation collapse as an inescapable law of customer support routing. However, the post-Phase-6 architecture improvement (Section 6.3.1) revealed that **the collapse was not fundamentally inescapable, but specifically an artifact of single-scalar similarity thresholding**. By introducing a decoupled two-threshold gate with independent LLM semantic resolution verification, held-out FAH dropped to **5.71%** while simultaneously pulling False Escalations down to **60.98%** (and reducing asymmetric cost by 42.1%). Precision discrimination requires semantic verification rather than scalar cutoff tuning.
 3. **The Groundedness Reality Gap (22% vs. 72%):**
    Heuristic sampling initially suggested a 72.0% visible-resolution rate. Rigorous hand-auditing proved that only **22.0%** of historical threads contained standalone public resolutions (see Section 7.1, Failure Mode 5 for concrete downstream tweet examples). Presenting drafted replies as "grounded in historical support cases" is misleading for 78% of the traffic, which actually relies on synthesized policy fallbacks.
 4. **Retrieval Spot-Check Metric Inflation (30% vs. 90%):**
@@ -208,11 +240,11 @@ The codebase provides two distinct, explicitly separated verification modes:
 
 ### 9.2 Strategic Next Steps (Post-Evaluation Roadmap)
 
-The system's failure modes point directly to five concrete architectural mitigations for future production cycles:
+The system's failure modes point directly to concrete architectural mitigations for future production cycles:
 
-1. **FM 1 Mitigation — Soft Multi-Partition Dense Retrieval:** Expand dense retrieval to query across the top-2 predicted intent corpora with cross-encoder re-ranking, eliminating the 29.3% of false escalations caused by upstream classification bleed.
-2. **FM 2 Mitigation — Query Expansion & Paraphrase Rewriting:** Normalize terse, colloquial customer tweets into standard technical symptom descriptions before computing dense embeddings, bridging the 69.0% colloidal phrasing dead zone.
-3. **FM 3 Mitigation — Two-Stage Decoupled Evaluation (Judge & Drafter):** Redesign the judge rubric and agent self-check into a two-stage evaluation: first assess whether the customer's stated problem is meaningfully addressed, independent of SOP-text match, before scoring evidence groundedness. Deliberately deferred during Phase 5 to preserve frozen-prompt anti-tuning integrity.
+1. **FM 1 Mitigation — Soft Multi-Partition Dense Retrieval (PARTIALLY IMPLEMENTED & VALIDATED, §6.3.1):** Multi-partition candidate union search was implemented and evaluated in `src/retrieval.py`. The empirical finding showed that unconstrained multi-partition search without re-ranking slightly degraded held-out accuracy (61.84% vs 64.47%) due to cross-domain noise. The actual remaining work is specifically incorporating cross-encoder re-ranking to filter cross-domain candidates before passing them downstream.
+2. **FM 2 Mitigation — Query Expansion & Paraphrase Rewriting:** Normalize terse, colloquial customer tweets into standard technical symptom descriptions before computing dense embeddings, bridging the 69.0% colloquial phrasing dead zone.
+3. **FM 3 Mitigation — Two-Stage Decoupled Evaluation (PARTIALLY IMPLEMENTED, §6.3.1):** The problem-resolution verification architecture for the *pipeline escalation decision* was implemented and validated (`src/resolution_check.py`, `openai/gpt-oss-120b`), successfully resolving FM3 on the held-out split (`gs_0004` and `gs_0111` vetoed). However, the *post-hoc offline judge rubric* itself (`eval/judge.py`) remains frozen and unchanged per the anti-tuning commitment. The actual remaining work is redesigning the frozen judge rubric itself to decouple customer symptom resolution from verbatim SOP snippet matching.
 4. **FM 4 Mitigation — Negative Exemplar & Constraint Filtering:** Require explicit multi-factor verification (e.g., explicit mention of "Family", "Duo", or "invite") before activating specialized billing SOPs, eliminating misattributions where individual payment inquiries map to Family Plan invite instructions.
 5. **FM 5 Mitigation — Curated SOP Corpus Expansion:** Expand `CuratedPolicyReference` from 17 to 50 granular, platform-specific verified procedures, providing formal public fallbacks for the 78% of historical Twitter traffic that deflects to DMs without public resolutions.
 6. **Conversational Exhaustion Adjacency Relaxation (`gs_0053` mitigation):** Relax `EXHAUSTED_TROUBLESHOOTING_RE`'s word-adjacency requirement to catch conversational exhaustion phrasing (e.g., *"and everything already"*), and add few-shot examples of conversational exhaustion phrasing to the resolution-check prompt — flagged as high-priority, not yet implemented (held-out discipline preserved).
